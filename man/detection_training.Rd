@@ -4,16 +4,10 @@
 \alias{detection_training}
 \title{Generate detection network training files}
 \usage{
-detection_training(path, threshold = 15, res = 1, expand = 1)
+detection_training(path)
 }
 \arguments{
 \item{path}{Character Location of the lidar tile to process.}
-
-\item{threshold}{Minimum height of the tree clusters.}
-
-\item{res}{Numeric. Resolution of the canopy height raster for connected components}
-
-\item{expand}{Numeric. Add meters to the bounding boxes for connected components.}
 }
 \value{
 A .csv file is written to disk containing detections
