@@ -41,7 +41,11 @@ detection_training<-function(path){
 
   #Format according the keras-retinet requirements "CSV datasets" https://github.com/fizyr/keras-retinanet
   #Create a unique index
-  boxes<-trees %>% mutate(numeric_label=as.numeric(as.factor(label)))
+
+  #Add tile extent for spatial reference
+  e<-extent(tile)
+
+  boxes<-trees %>% mutate(numeric_label=as.numeric(as.factor(label))) %>% mutate(tile_xmin=e@xmin,tile_xmax=e@xmax,tile_ymin=e@ymin,tile_ymax=e@ymax)
   fname<-paste("Results/detection_boxes/",sanitized_fn,".csv",sep="")
 
   write.csv(boxes,fname,row.names = T)
