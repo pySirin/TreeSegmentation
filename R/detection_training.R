@@ -43,7 +43,7 @@ detection_training<-function(path){
   #Create a unique index
 
   #Add tile extent for spatial reference
-  e<-extent(tile)
+  e<-raster::extent(tile)
 
   boxes<-trees %>% mutate(numeric_label=as.numeric(as.factor(label))) %>% mutate(tile_xmin=e@xmin,tile_xmax=e@xmax,tile_ymin=e@ymin,tile_ymax=e@ymax)
   fname<-paste("Results/detection_boxes/",sanitized_fn,".csv",sep="")
