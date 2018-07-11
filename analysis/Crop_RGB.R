@@ -8,7 +8,9 @@ library(parallel)
 library(rgdal)
 
 #Get lists of itcs
-shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
+#shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
+shps<-list.files("data/ITCs",pattern=".shp",full.names = T,recursive = T)
+
 itcs<-lapply(shps,readOGR,verbose=F)
 
 names(itcs)<-sapply(itcs,function(x){
@@ -25,10 +27,10 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
 
   #Look for corresponding tile
   #get lists of rasters
-  #fils<-list.files("/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/",full.names = T,pattern=".tif")
-  #filname<-list.files("/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/",pattern=".tif")
+  fils<-list.files("/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/",full.names = T,pattern=".tif")
+  filname<-list.files("/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/",pattern=".tif")
 
-  inpath<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01/"
+  #inpath<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01/"
   fils<-list.files(inpath,full.names = T,pattern=".tif")
   filname<-list.files(inpath,pattern=".tif")
 
@@ -74,14 +76,27 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   }
 
   #Clip matched tile
-  clip_ext<-2.5*extent(itcs[[x]])
+  #Create a window of equal size, centered
+  #center point
+  e<-extent(itcs[[x]])
+
+  xmean=mean(c(e@xmin,e@xmax))
+  ymean=mean(c(e@xmin,e@xmax))
+
+  #add distance
+  xmin=xmean-25
+  xmax=xmean+25
+  ymin=ymean-25
+  ymax=ymean+25
+
+  clip_ext<-extent(xmin,xmax,ymin,ymax)
   clipped_rgb<-raster::crop(tile_to_crop,clip_ext)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/D03/OSBS/L1/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/D03/OSBS/L3/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
   print(cname)
 
   #rescale to
-  writeRaster(clipped_rgb,cname,overwrite=T)
+  writeRaster(clipped_rgb,cname,overwrite=T,datatype='INT1U')
   return(cname)
 }
