@@ -8,8 +8,8 @@ library(parallel)
 library(rgdal)
 
 #Get lists of itcs
-#shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
-shps<-list.files("data/ITCs",pattern=".shp",full.names = T,recursive = T)
+shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
+#shps<-list.files("data/ITCs",pattern=".shp",full.names = T,recursive = T)
 
 itcs<-lapply(shps,readOGR,verbose=F)
 
@@ -31,8 +31,8 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   filname<-list.files("/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/",pattern=".tif")
 
   #inpath<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01/"
-  fils<-list.files(inpath,full.names = T,pattern=".tif")
-  filname<-list.files(inpath,pattern=".tif")
+  #fils<-list.files(inpath,full.names = T,pattern=".tif")
+  #filname<-list.files(inpath,pattern=".tif")
 
   #loop through rasters and look for intersections
   for (i in 1:length(fils)){
@@ -81,7 +81,7 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   e<-extent(itcs[[x]])
 
   xmean=mean(c(e@xmin,e@xmax))
-  ymean=mean(c(e@xmin,e@xmax))
+  ymean=mean(c(e@ymin,e@ymax))
 
   #add distance
   xmin=xmean-25
@@ -93,7 +93,7 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   clipped_rgb<-raster::crop(tile_to_crop,clip_ext)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/D03/OSBS/L3/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
   print(cname)
 
   #rescale to
