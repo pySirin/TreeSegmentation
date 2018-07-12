@@ -2,6 +2,7 @@ library(TreeSegmentation)
 library(rgdal)
 library(raster)
 library(stringr)
+library(lidR)
 
 shps<-list.files("../data/ITCs/",pattern=".shp",full.names = T,recursive = T)
 
@@ -27,12 +28,12 @@ for(x in 1:length(itcs)){
   }
 
   #add rgb
-  rgb_path<-paste("../data/2015/Hyperspectral/",fname,".tif",sep="")
+  rgb_path<-paste("../data/2017/Camera/",fname,".tif",sep="")
   if(file.exists(rgb_path)){
     ortho<-raster::stack(rgb_path)
     #select bands
-    rgb<-ortho[[c(17,86,177)]]/10000
-    rgb[rgb>1]<-NA
+    #rgb<-ortho[[c(17,86,177)]]/10000
+    #rgb[rgb>1]<-NA
     #get rid of NA
 
 
@@ -40,9 +41,9 @@ for(x in 1:length(itcs)){
     next
   }
 
-  png(paste("plots/hyperspectral_2015/",fname,".png",sep=""))
+  png(paste("plots/RGB_2017/",fname,".png",sep=""))
 
-  plotRGB(stretch(rgb/255),ext=extent(itcs[[x]])*1.6)
+  plotRGB(ortho)
 
   try(tile<-readLAS(inpath))
   tile@crs<-CRS("+init=epsg:32617")
