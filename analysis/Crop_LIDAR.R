@@ -24,7 +24,7 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   #plot(itcs[[x]])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
+  path_to_tiles<-"/orange/ewhite/NeonData/2015_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
 
   #Create raster catalog
   ctg<-catalog(path_to_tiles)
@@ -56,7 +56,7 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
 
   #filename
   plotid<-unique(itcs[[x]]$Plot_ID)
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Lidar/",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2015/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
