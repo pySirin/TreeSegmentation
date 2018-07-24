@@ -6,7 +6,7 @@
 \code{evaluate_all} extends evaluate to multiple tiles, optionally run in parallel.}
 \usage{
 evaluate_all(itcs, algorithm = "silva", path_to_tiles = NULL,
-  cores = NULL, extra = F, plot_results = F)
+  cores = NULL, extra = F, plot_results = F, basemap = "")
 }
 \arguments{
 \item{itcs}{A SpatialPolygonDataFrame of ground truth polygons}
@@ -20,6 +20,8 @@ evaluate_all(itcs, algorithm = "silva", path_to_tiles = NULL,
 \item{extra}{Logical. Return a list of segmented lidar tiles, predicted convex hull polygons, and the calculated evaluation statistics.}
 
 \item{plot_results}{Logical. Generate a plot of ground truth and predicted polygons}
+
+\item{basemap}{Character Directory of rgb images for basemap}
 }
 \value{
 dataframe of the jaccard overlap among polygon pairs

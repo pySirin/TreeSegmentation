@@ -5,11 +5,12 @@
 #' @param algorithm  Character. A vector of lidar unsupervised classification algorithm(s). Currently "silva","dalponte","li" and "watershed" are implemented. See \code{\link[lidR]{lastrees}}
 #' @param path_to_tiles Character. Location of lidar tiles on system.
 #' @param plot_results Logical. Generate a plot of ground truth and predicted polygons
+#' @param basemap Character Directory of rgb images for basemap
 #' @param extra Logical. Return a list of segmented lidar tiles, predicted convex hull polygons, and the calculated evaluation statistics.
 #' @return dataframe of the jaccard overlap among polygon pairs for each selected method. If extra=T, \code{evaluate} will return a list object of results, predicted polygons, as well as output lidR tiles. See e.g. \code{\link{silva2016}}
 #' @export
 #'
-evaluate<-function(ground_truth,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F){
+evaluate<-function(ground_truth,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F,basemap=""){
 
   #set file name
   fname<-get_tile_filname(ground_truth)
@@ -79,13 +80,12 @@ evaluate<-function(ground_truth,algorithm="silva",path_to_tiles=NULL,extra=F,plo
   if(plot_results){
     #which was the best performing method
     best_method<-statdf %>% group_by(Method) %>% summarize(m=mean(IoU)) %>% arrange(desc(m))
-    ortho<-raster::stack(paste("../data/2017/Camera/",unique(ground_truth$Plot_ID),".tif",sep=""))
+    ortho<-raster::stack(paste(basemap,unique(ground_truth$Plot_ID),".tif",sep=""))
     png(paste("plots/evaluation/",unique(ground_truth$Plot_ID),".png",sep=""))
     par(oma=c(0,0,2,0))
-    raster::plotRGB(raster::stretch(ortho/10000*255),ext=extent(predictions[[best_method$Method[1]]]),main=paste(unique(ground_truth$Plot_ID),":",best_method$Method[1],"=",round(best_method$m[1],2)),axes=T)
+    raster::plotRGB(ortho,ext=extent(predictions[[best_method$Method[1]]]),main=paste(unique(ground_truth$Plot_ID),":",best_method$Method[1],"=",round(best_method$m[1],2)),axes=T)
     plot(ground_truth,border="red",add=TRUE)
     plot(predictions[[best_method$Method[1]]],add=T,border="gray90")
-    #TODO check this.
     title()
     dev.off()
   }

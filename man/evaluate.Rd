@@ -5,7 +5,7 @@
 \title{Wrapper for calculating overlap among predictiong and ground truth polygons for lidar-based tree segmentation methods}
 \usage{
 evaluate(ground_truth, algorithm = "silva", path_to_tiles = NULL,
-  extra = F, plot_results = F)
+  extra = F, plot_results = F, basemap = "")
 }
 \arguments{
 \item{ground_truth}{SpatialPolygonDataFrame of ground truth polygons}
@@ -17,6 +17,8 @@ evaluate(ground_truth, algorithm = "silva", path_to_tiles = NULL,
 \item{extra}{Logical. Return a list of segmented lidar tiles, predicted convex hull polygons, and the calculated evaluation statistics.}
 
 \item{plot_results}{Logical. Generate a plot of ground truth and predicted polygons}
+
+\item{basemap}{Character Directory of rgb images for basemap}
 }
 \value{
 dataframe of the jaccard overlap among polygon pairs for each selected method. If extra=T, \code{evaluate} will return a list object of results, predicted polygons, as well as output lidR tiles. See e.g. \code{\link{silva2016}}

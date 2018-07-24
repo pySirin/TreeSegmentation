@@ -18,7 +18,7 @@ library(sp)
 library(ggplot2)
 library(rgl)
 library(lidR)
-library(pander)
+library(kableExtra)
 
 knit_hooks$set(webgl = hook_webgl)
 opts_chunk$set(warning=F,message=F)
@@ -122,7 +122,7 @@ How many tree predictions?
 ptlist<-list(silva=silva$tile,dalponte=dalponte$tile,li=li$tile,watershed=watershed_result$tile)
 unique_total<-sapply(ptlist,function(x) length(unique(x@data$treeID)))
 df<-data.frame(Algorthm=c(names(ptlist)),Total_Trees=as.numeric(unique_total))
-pandoc.table(df,style="rmarkdown")
+df %>% kable() %>% kable_styling()
 ```
 
 ## Assign Trees
@@ -145,7 +145,7 @@ median(statdf$IoU)
 
 
 # As a wrapper for one tile, multiple methods
-```{r,eval=T}
+```{r,eval=F}
 results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva","dalponte"),path_to_tiles=path_to_tiles,plot_results=T)
 
 ggplot(results,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
@@ -155,7 +155,7 @@ results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
 # Parallel wrapper across all tiles
 
 ```{r,eval=T}
-system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("dalponte","li","watershed","silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T))
+system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/"))
 
 #plot results
 ggplot(results_all,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()

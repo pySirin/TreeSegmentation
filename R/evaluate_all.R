@@ -5,7 +5,7 @@
 #' @inheritParams evaluate
 #' @return dataframe of the jaccard overlap among polygon pairs
 #' @export
-evaluate_all<-function(itcs,algorithm = "silva",path_to_tiles=NULL,cores=NULL,extra=F,plot_results=F){
+evaluate_all<-function(itcs,algorithm = "silva",path_to_tiles=NULL,cores=NULL,extra=F,plot_results=F,basemap=""){
 
   #If running in parallel
   `%dopar%` <- foreach::`%dopar%`
@@ -15,7 +15,7 @@ evaluate_all<-function(itcs,algorithm = "silva",path_to_tiles=NULL,cores=NULL,ex
   }
   results<-foreach::foreach(i=1:length(itcs),.packages=c("TreeSegmentation","sp","lidR"),.errorhandling = "remove") %dopar% {
     ground_truth<-itcs[[i]]
-    TreeSegmentation::evaluate(ground_truth=ground_truth,algorithm=algorithm,path_to_tiles=path_to_tiles,extra=extra,plot_results=plot_results)
+    TreeSegmentation::evaluate(ground_truth=ground_truth,algorithm=algorithm,path_to_tiles=path_to_tiles,extra=extra,plot_results=plot_results,basemap=basemap)
   }
 
   #Report empty results

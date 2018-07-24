@@ -36,7 +36,6 @@ for(x in 1:length(itcs)){
     #rgb[rgb>1]<-NA
     #get rid of NA
 
-
   }else{
     next
   }
