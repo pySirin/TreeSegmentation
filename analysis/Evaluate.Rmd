@@ -6,6 +6,8 @@ output:
   html_document:
     toc: true
     number_sections: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r,warning=F,message=F}
@@ -146,7 +148,7 @@ median(statdf$IoU)
 
 # As a wrapper for one tile, multiple methods
 ```{r,eval=F}
-results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva","dalponte"),path_to_tiles=path_to_tiles,plot_results=T)
+results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva"),path_to_tiles=path_to_tiles,plot_results=T,basemap="../data/2017/Camera/L3/")
 
 ggplot(results,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
 results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
@@ -155,7 +157,7 @@ results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
 # Parallel wrapper across all tiles
 
 ```{r,eval=T}
-system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/"))
+system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/L3"))
 
 #plot results
 ggplot(results_all,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()

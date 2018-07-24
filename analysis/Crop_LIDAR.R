@@ -50,7 +50,7 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   clipped_las<-lasclip(ctg,extent_polygon)
 
   #if null, return NA
-  if(!exists("clipped_las")){
+  if(is.null("clipped_las")){
     return(NA)
   }
 

@@ -33,7 +33,6 @@ silva2016<-function(path=NULL,tile=NULL,output=c("all"),ground=T){
   if(output=="tile"){
     return(silva2016)
   }
-  print("hi")
   #create polygons
   silva_convex<-get_convex_hulls(tile = silva2016,ID = silva2016@data$treeID)
 
