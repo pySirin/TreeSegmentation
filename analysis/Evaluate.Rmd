@@ -157,7 +157,7 @@ results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
 # Parallel wrapper across all tiles
 
 ```{r,eval=T}
-system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/L3"))
+system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/L3/"))
 
 #plot results
 ggplot(results_all,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
