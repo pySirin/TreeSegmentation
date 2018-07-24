@@ -49,9 +49,14 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   #clip to extent
   clipped_las<-lasclip(ctg,extent_polygon)
 
+  #if null, return NA
+  if(!exists("clipped_las")){
+    return(NA)
+  }
+
   #filename
   plotid<-unique(itcs[[x]]$Plot_ID)
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Lidar",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
