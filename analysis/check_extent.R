@@ -28,7 +28,7 @@ for(x in 1:length(itcs)){
   }
 
   #add rgb
-  rgb_path<-paste("../data/2015/Camera/",fname,".tif",sep="")
+  rgb_path<-paste("/Users/ben/Dropbox/Weecology/ECODSEdataset/RSdata/camera/",fname,"_camera.tif",sep="")
   if(file.exists(rgb_path)){
     ortho<-raster::stack(rgb_path)
     #select bands
@@ -41,9 +41,9 @@ for(x in 1:length(itcs)){
     next
   }
 
-  png(paste("plots/RGB_2015/",fname,".png",sep=""))
+  png(paste("plots/RGB_Competition/",fname,".png",sep=""))
 
-  plotRGB(ortho)
+  plotRGB(ortho,ext=)
 
   try(tile<-readLAS(inpath))
   tile@crs<-CRS("+init=epsg:32617")
@@ -52,7 +52,7 @@ for(x in 1:length(itcs)){
   #plot(extent(tile),col='red')
   title(unique(itcs[[x]]$Plot_ID))
 
-  ground_truth<-raster::crop(itcs[[x]],extent(tile))
-  plot(ground_truth,add=T,border="red")
+  #ground_truth<-raster::crop(itcs[[x]],extent(tile))
+  plot(itcs[[x]],add=T,border="red")
   dev.off()
 }
