@@ -28,7 +28,7 @@ for(x in 1:length(itcs)){
   }
 
   #add rgb
-  rgb_path<-paste("../data/2017/Camera/",fname,".tif",sep="")
+  rgb_path<-paste("../data/2015/Camera/",fname,".tif",sep="")
   if(file.exists(rgb_path)){
     ortho<-raster::stack(rgb_path)
     #select bands
@@ -41,7 +41,7 @@ for(x in 1:length(itcs)){
     next
   }
 
-  png(paste("plots/RGB_2017/",fname,".png",sep=""))
+  png(paste("plots/RGB_2015/",fname,".png",sep=""))
 
   plotRGB(ortho)
 

@@ -8,9 +8,8 @@ library(parallel)
 library(rgdal)
 
 #Get lists of itcs
-shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
-#shps<-list.files("data/ITCs",pattern=".shp",full.names = T,recursive = T)
-
+#shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
+shps<-list.files("data/ITCs",pattern=".shp",full.names = T,recursive = T)
 itcs<-lapply(shps,readOGR,verbose=F)
 
 names(itcs)<-sapply(itcs,function(x){
