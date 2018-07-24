@@ -72,14 +72,27 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   }
 
   #Clip matched tile
-  clip_ext<-2.5*extent(itcs[[x]])
+  #Create a window of equal size, centered
+  #center point
+  e<-extent(itcs[[x]])
+
+  xmean=mean(c(e@xmin,e@xmax))
+  ymean=mean(c(e@ymin,e@ymax))
+
+  #add distance
+  xmin=xmean-25
+  xmax=xmean+25
+  ymin=ymean-25
+  ymax=ymean+25
+
+  clip_ext<-extent(xmin,xmax,ymin,ymax)
   clipped_rgb<-raster::crop(tile_to_crop,clip_ext)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/D03/OSBS/L1/Hyperspectral/2015/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/L1/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
   print(cname)
 
   #rescale to
-  writeRaster(clipped_rgb,cname,overwrite=T)
+  writeRaster(clipped_rgb,cname,overwrite=T,datatype='INT1U')
   return(cname)
 }

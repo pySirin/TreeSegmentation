@@ -15,7 +15,7 @@ names(itcs)<-sapply(itcs,function(x){
   id<-unique(x$Plot_ID)
 })
 
-#Crop lidar by itc extent (buffered by 3x) and write to file
+#Crop lidar by itc extent and write to file
 #cores<-detectCores()
 cl<-makeCluster(15)
 registerDoSNOW(cl)
@@ -24,13 +24,26 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   #plot(itcs[[x]])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/ufrc/ewhite/s.marconi/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
+  path_to_tiles<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
 
   #Create raster catalog
   ctg<-catalog(path_to_tiles)
 
   #create extent polygon
-  extent_polygon<-as(2.5*extent(itcs[[x]]),"SpatialPolygons")
+  e<-extent(itcs[[x]])
+
+  xmean=mean(c(e@xmin,e@xmax))
+  ymean=mean(c(e@ymin,e@ymax))
+
+  #add distance
+  xmin=xmean-25
+  xmax=xmean+25
+  ymin=ymean-25
+  ymax=ymean+25
+
+  clip_ext<-extent(xmin,xmax,ymin,ymax)
+
+  extent_polygon<-as(clip_ext,"SpatialPolygons")
   extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
 
   #clip to extent
@@ -38,7 +51,7 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
 
   #filename
   plotid<-unique(itcs[[x]]$Plot_ID)
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/D03/OSBS/L1/DiscreteLidar/Cropped/2017/",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Lidar",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
