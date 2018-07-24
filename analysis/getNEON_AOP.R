@@ -13,4 +13,4 @@ prd = args[6]
 ste = args[7]
 #year to download
 yr = args[8]
-#byFileAOP(prd, site = ste, year = yr, check.size=F, savepath = paste("/orange/ewhite/NeonData/",  ste, sep=""))
+byFileAOP(prd, site = ste, year = yr, check.size=F, savepath = paste("/orange/ewhite/NeonData/",  ste, sep=""))
