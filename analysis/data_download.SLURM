@@ -13,13 +13,12 @@
 #SBATCH --output=itc.out   # Standard output and error log
 #SBATCH --error=itc.err
 
-
 pwd; hostname; date
 module load R
 echo "get data"
 echo
 
-Rscript --default-packages=stats,utils,datasets,base,graphics,grDevices,methods --vanilla ./getNEON_AOP.R $1 $2 $3
+Rscript ./getNEON_AOP.R $1 $2 $3
 echo "done"
 
 date
