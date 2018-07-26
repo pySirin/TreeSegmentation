@@ -13,21 +13,22 @@ if(testing){
 } else{
 
   #lidar data dir
-  lidar_dir<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
-  rgb_dir<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/"
-  itcs_path<-"/orange/ewhite/b.weinstein/ITC"
+  lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/"
+  #rgb_dir<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/"
+  #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
   lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
 
-  cl<-makeCluster(10)
+  cl<-makeCluster(20)
   registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation")) %dopar%{
 
     #check if tile can be processed
-    flag<-check_tile(itcs_path=itcs_path,lidar_path = lidar_files[[x]],rgb_dir=rgb_dir)
+    #flag<-check_tile(itcs_path=itcs_path,lidar_path = lidar_files[[x]],rgb_dir=rgb_dir)
+    flag<-TRUE
 
     if(flag){
-      generate_training(lidar = lidar_files[[x]] ,algorithm = c("silva"),expand=1.3)
+      generate_training(lidar = lidar_files[[x]] ,algorithm = c("silva"),expand=1)
         } else{
           return("Failed check_tile")
         }

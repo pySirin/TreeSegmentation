@@ -83,7 +83,7 @@ evaluate<-function(ground_truth,algorithm="silva",path_to_tiles=NULL,extra=F,plo
     ortho<-raster::stack(paste(basemap,unique(ground_truth$Plot_ID),".tif",sep=""))
     png(paste("plots/evaluation/",unique(ground_truth$Plot_ID),".png",sep=""))
     par(oma=c(0,0,2,0))
-    raster::plotRGB(ortho,main=paste(unique(ground_truth$Plot_ID),":",best_method$Method[1],"=",round(best_method$m[1],2)))
+    raster::plotRGB(ortho,main=paste(unique(ground_truth$Plot_ID),":",best_method$Method[1],"=",round(best_method$m[1],2)),axes=T)
     plot(ground_truth,border="red",add=TRUE)
     plot(predictions[[best_method$Method[1]]],add=T,border="black")
     title()

@@ -148,7 +148,7 @@ median(statdf$IoU)
 
 # As a wrapper for one tile, multiple methods
 ```{r,eval=F}
-results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva"),path_to_tiles=path_to_tiles,plot_results=T,basemap="../data/2017/Camera/L3/")
+results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva"),path_to_tiles=path_to_tiles,plot_results=T,basemap="../data/2015/Camera/")
 
 ggplot(results,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
 results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
@@ -157,7 +157,7 @@ results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
 # Parallel wrapper across all tiles
 
 ```{r,eval=T}
-system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=cores,extra=F,plot_results = T,basemap="../data/2017/Camera/L3/"))
+system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=1,extra=F,plot_results = T,basemap="../data/2017/Camera/L1/"))
 
 #plot results
 ggplot(results_all,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
