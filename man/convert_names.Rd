@@ -4,7 +4,8 @@
 \alias{convert_names}
 \title{Get corresponding tile across data types}
 \usage{
-convert_names(from, to, lidar = NULL, rgb = NULL, hyperspectral = NULL)
+convert_names(from, to, lidar = NULL, rgb = NULL, hyperspectral = NULL,
+  site = "OSBS")
 }
 \arguments{
 \item{from}{current sensor}

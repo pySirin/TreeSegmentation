@@ -37,4 +37,3 @@ CoordinateFromAzimuth<-function(dista, angle, xcord, ycord){
     }
     return(point.coords)
   }
-}
