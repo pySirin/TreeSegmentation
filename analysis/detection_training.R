@@ -3,6 +3,7 @@ library(TreeSegmentation)
 library(doSNOW)
 library(foreach)
 library(dplyr)
+library(stringr)
 
 testing=F
 
@@ -16,13 +17,16 @@ if(testing){
   #lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/"
 
   #GRSM lidar dir
-  lidar_dir<-"/orange/ewhite/NeonData/GRSM/DP1.30003.001/2017/FullSite/D17/2017_GRSM_2/L1/DiscreteLidar/ClassifiedPointCloud/"
+  lidar_dir<-"/orange/ewhite/NeonData/GRSM/DP1.30003.001/2016/FullSite/D07/2016_GRSM/L1/DiscreteLidar/ClassifiedPointCloud/"
 
   #lidar_dir<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
   #rgb_dir<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/"
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
-  lidar_files<-list.files(lidar_dir,full.names = T,pattern="cloud.laz")
+  lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
 
+  lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
+
+  #Take out colorized
   cl<-makeCluster(10)
   registerDoSNOW(cl)
 
