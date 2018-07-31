@@ -30,7 +30,7 @@ if(testing){
   cl<-makeCluster(10)
   registerDoSNOW(cl)
 
-  results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation")) %dopar%{
+  results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
 
     #check if tile can be processed
     #flag<-check_tile(itcs_path=itcs_path,lidar_path = lidar_files[x],rgb_dir=rgb_dir)
