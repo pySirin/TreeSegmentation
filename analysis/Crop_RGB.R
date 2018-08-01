@@ -26,8 +26,8 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
 
   #Look for corresponding tile
   #get lists of rasters
-  fils<-list.files("/orange/ewhite/NeonData/2015_Campaign/D03/OSBS/L3/Orthophoto/",full.names = T,pattern=".tif")
-  filname<-list.files("/orange/ewhite/NeonData/2015_Campaign/D03/OSBS/L3/Orthophoto/",pattern=".tif")
+  fils<-list.files("/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L3/Orthophoto/",full.names = T,pattern=".tif")
+  filname<-list.files("/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L3/Orthophoto/",pattern=".tif")
 
   #inpath<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01"
   #fils<-list.files(inpath,full.names = T,pattern=".tif")
@@ -83,16 +83,16 @@ foreach(x=1:length(itcs),.packages=c("TreeSegmentation","sp","raster"),.errorhan
   ymean=mean(c(e@ymin,e@ymax))
 
   #add distance
-  xmin=xmean-25
-  xmax=xmean+25
-  ymin=ymean-25
-  ymax=ymean+25
+  xmin=xmean-100
+  xmax=xmean+100
+  ymin=ymean-100
+  ymax=ymean+100
 
   clip_ext<-extent(xmin,xmax,ymin,ymax)
   clipped_rgb<-raster::crop(tile_to_crop,clip_ext)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/2015/Camera/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Camera/L3/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
   print(cname)
 
   #rescale to
