@@ -36,8 +36,7 @@ detection_training<-function(path,site){
   trees$label<-"Tree"
 
   #give the results a filename and label the lidar tile
-  sanitized_fn<-stringr::str_extract(string=path,pattern="(NEON.*)")
-  sanitized_fn<-stringr::str_replace_all(sanitized_fn,"\\.","_")
+  sanitized_fn<-stringr::str_match(string=path,pattern="(\\w+).laz")[,2]
 
   #Format according the keras-retinet requirements "CSV datasets" https://github.com/fizyr/keras-retinanet
   #Create a unique index
