@@ -9,12 +9,13 @@
 #' @export
 convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSBS'){
 
+  #domain lookup
+  dlookup<-data.frame(site=c("OSBS","SJER","GRSM"),domain="D03","D17","D07")
   if(from=="rgb" & to=="lidar"){
     #Get corresponding lidar tile
     geo_index<-stringr::str_match(rgb,"_(\\d+_\\d+)_image")[,2]
-    indices<-strsplit(rgb,"_")
-    site<-indices[[1]][[5]]
-    domain<-indices[[1]][[4]]
+
+    domain<-dlookup[dlookup$site==site,"domain"]
 
     fn<-paste("NEON_",domain,"_",site,"_DP1_",geo_index,"_classified_point_cloud.laz",sep="")
     return(fn)
@@ -22,20 +23,18 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
 
   if(from=="lidar" & to == "rgb"){
     geo_index<-stringr::str_match(lidar,"_(\\d+_\\d+)_classified")[,2]
-    indices<-strsplit(lidar,"_")
-    site<-indices[[1]][[5]]
-    domain<-indices[[1]][[4]]
 
     if(site=="OSBS"){
       fn<-paste("2017",site,"_3_",geo_index,"_image.tif",sep="")
     }
 
     if(site=="SJER"){
-      fn<-paste("NEON_",domain,"_",site,"_DP3_",geo_index,"_image.tif",sep="")
+      fn<-paste("NEON_D17","_",site,"_DP3_",geo_index,"_image.tif",sep="")
     }
 
     if(site=="GRSM"){
-      fn<-paste("2016_GRSM_2",geo_index,"_image.tif",sep="")
+      geo_index<-stringr::str_match(lidar,"_(\\d+_\\d+).laz")[,2]
+      fn<-paste("2016_GRSM_2_",geo_index,"_image.tif",sep="")
     }
 
 
