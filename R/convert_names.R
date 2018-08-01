@@ -34,6 +34,10 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
       fn<-paste("NEON_",domain,"_",site,"_DP3_",geo_index,"_image.tif",sep="")
     }
 
+    if(site=="GRSM"){
+      fn<-paste("2016_GRSM_2",geo_index,"_image.tif",sep="")
+    }
+
 
     return(fn)
   }

@@ -37,7 +37,7 @@ if(testing){
     flag=TRUE
 
     if(flag){
-      detection_training(path=lidar_files[x])
+      detection_training(path=lidar_files[x],site="GRSM")
     } else{
       return("Failed check_tile")
     }

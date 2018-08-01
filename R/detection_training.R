@@ -6,7 +6,7 @@
 #' @export
 #'
 #'
-detection_training<-function(path){
+detection_training<-function(path,site){
 
   tile<-lidR::readLAS(path)
   algorithm<-"silva"
@@ -30,7 +30,7 @@ detection_training<-function(path){
 
   #get the corresponding orthophoto naming
   trees$lidar_path<-stringr::str_match(path,"\\/(\\w+.laz)")[,2]
-  trees$rgb_path<-convert_names(from="lidar",to="rgb",lidar=path)
+  trees$rgb_path<-convert_names(from="lidar",to="rgb",lidar=path,site=site)
 
   #label
   trees$label<-"Tree"
