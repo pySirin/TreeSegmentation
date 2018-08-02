@@ -28,7 +28,7 @@ for(x in 1:length(itcs)){
   }
 
   #add rgb
-  rgb_path<-paste("/Users/ben/Dropbox/Weecology/ECODSEdataset/RSdata/camera/",fname,"_camera.tif",sep="")
+  rgb_path<-paste("../data/2017/Camera/L3/",fname,".tif",sep="")
   if(file.exists(rgb_path)){
     ortho<-raster::stack(rgb_path)
     #select bands
@@ -40,7 +40,7 @@ for(x in 1:length(itcs)){
     next
   }
 
-  png(paste("plots/RGB_Competition/",fname,".png",sep=""))
+  png(paste("plots/RGB_2017_larger/",fname,".png",sep=""))
 
   plotRGB(ortho,ext=)
 

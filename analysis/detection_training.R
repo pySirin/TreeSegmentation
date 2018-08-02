@@ -6,6 +6,7 @@ library(dplyr)
 library(stringr)
 
 testing=F
+site="GRSM"
 
 if(testing){
   path<-"../data/2017/Lidar/OSBS_006.laz"
@@ -18,13 +19,13 @@ if(testing){
 
   #GRSM lidar dir
   lidar_dir<-"/orange/ewhite/NeonData/GRSM/DP1.30003.001/2016/FullSite/D07/2016_GRSM/L1/DiscreteLidar/ClassifiedPointCloud/"
+  lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
+  lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
 
   #lidar_dir<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
-  #rgb_dir<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/"
+  rgb_dir<-"/orange/ewhite/NeonData/GRSM/DP1.30010.001/2016/FullSite/D07/2016_GRSM_2/L3/Camera/Mosaic/V01/"
+  rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
-  lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
-
-  lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
 
   #Take out colorized
   cl<-makeCluster(10)
@@ -33,8 +34,9 @@ if(testing){
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
 
     #check if tile can be processed
-    #flag<-check_tile(itcs_path=itcs_path,lidar_path = lidar_files[x],rgb_dir=rgb_dir)
-    flag=TRUE
+    rgb_path<-convert_names(from="lidar",to="rgb",lidar=lidar_files[x],site=site)
+
+    flag<-rgb_path %in% rgb_files
 
     if(flag){
       detection_training(path=lidar_files[x],site="GRSM")
