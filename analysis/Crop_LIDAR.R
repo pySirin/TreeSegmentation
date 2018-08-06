@@ -17,14 +17,14 @@ names(itcs)<-sapply(itcs,function(x){
 
 #Crop lidar by itc extent and write to file
 #cores<-detectCores()
-cl<-makeCluster(15)
+cl<-makeCluster(10)
 registerDoSNOW(cl)
 
 foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   #plot(itcs[[x]])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/orange/ewhite/NeonData/2015_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
+  path_to_tiles<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
 
   #Create raster catalog
   ctg<-catalog(path_to_tiles)
