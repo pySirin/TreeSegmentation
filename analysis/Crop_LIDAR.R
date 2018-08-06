@@ -36,10 +36,10 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
   ymean=mean(c(e@ymin,e@ymax))
 
   #add distance
-  xmin=xmean-25
-  xmax=xmean+25
-  ymin=ymean-25
-  ymax=ymean+25
+  xmin=xmean-100
+  xmax=xmean+100
+  ymin=ymean-100
+  ymax=ymean+100
 
   clip_ext<-extent(xmin,xmax,ymin,ymax)
 
@@ -54,9 +54,12 @@ foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
     return(NA)
   }
 
+  #Make canopy model
+  canopy_model(clipped_las)
+
   #filename
   plotid<-unique(itcs[[x]]$Plot_ID)
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/2015/Lidar/",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/2017/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
