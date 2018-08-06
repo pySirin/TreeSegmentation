@@ -20,7 +20,7 @@ names(itcs)<-sapply(itcs,function(x){
 cl<-makeCluster(10)
 registerDoSNOW(cl)
 
-foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp")) %dopar% {
+foreach(x=1:length(itcs),.packages=c("lidR","TreeSegmentation","sp"),.errorhandling = "pass") %dopar% {
   #plot(itcs[[x]])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
