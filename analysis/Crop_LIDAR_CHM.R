@@ -7,6 +7,7 @@ library(foreach)
 library(lidR)
 library(parallel)
 library(rgdal)
+library(raster)
 
 shps<-list.files("/orange/ewhite/b.weinstein/ITC",pattern=".shp",full.names = T)
 itcs<-lapply(shps,readOGR,verbose=F)
