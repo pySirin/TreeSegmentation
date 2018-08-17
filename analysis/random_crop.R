@@ -4,13 +4,12 @@ library(raster)
 library(TreeSegmentation)
 library(rgdal)
 
-inpath<-"/orange/ewhite/NeonData/GRSM/DP1.30010.001/2016/FullSite/D07/2016_GRSM_2/L3/Camera/Mosaic/V01/"
-fils<-list.files(inpath,full.names = T,pattern=".tif")
-filname<-list.files(inpath,pattern=".tif")
+inpath<-"/orange/ewhite/NeonData/SJER/DP1.30010.001/2017/FullSite/D17/2017_SJER_2/L3/Camera/Mosaic/V02/"
+fils<-list.files(inpath,full.names = T,pattern="2017_")
 
-for (x in 1:10){
+for (x in 1:50){
   #pick random tile
-  tile<-sample(filname,1)
+  tile<-sample(fils,1)
 
   #read tile
   rgb<-stack(tile)
@@ -31,12 +30,11 @@ for (x in 1:10){
   clipped_rgb<-raster::crop(rgb,clip_ext)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/GRSM/Random/",x,".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/Random/",x,".tif",sep="")
   print(cname)
 
   #rescale to
   writeRaster(clipped_rgb,cname,overwrite=T,datatype='INT1U')
-  return(cname)
 }
 
 

@@ -1,15 +1,27 @@
-#parsing NEON veg structure data
 library(tidyverse)
+library(devtools)
+library(TreeSegmentation)
+library(neonUtilities)
+library(downloader)
+library(httr)
+library(jsonlite)
+library(sf)
 
-f<-list.files("/Users/ben/Dropbox/Weecology/NEON/WoodyPlant",full.names = T,pattern="mapping")
-rf<-lapply(f,read.csv)
+#data products download
+# chemical >>  DP1.10026.001
+# isotopes >> DP1.10053.001
+#get_data(10026)
+#get_data(10053)
+# vegetation structure >> DP1.10098.001
+#get_TOS_data(10098)
 
-rf<-lapply(rf,function(x){
-  x$supportingStemIndividualID<-as.character(x$supportingStemIndividualID)
-  x$previouslyTaggedAs<-as.character(x$previouslyTaggedAs)
-  return(x)
-  })
+#harmonize the three data products to make a single database
+#stack_chemical_leaf_products(10026)
+#stack_isotopes_leaf_products(10053)
 
-df<-bind_rows(rf)
+# get coordinates and position of the vegetation structure trees
+get_vegetation_structure()
 
-OSBS<-df %>% filter(siteID=="OSBS") %>% select(-c(measuredBy,recordedBy,dataQF,remarks,cfcOnlyTag,supportingStemIndividualID,samplingProtocolVersion,identificationReferences,previouslyTaggedAs))
+dat<-read.csv("data/Terrestrial/field_data.csv")
+
+OSBS<-dat %>% filter(siteID=="OSBS") %>% droplevels()
