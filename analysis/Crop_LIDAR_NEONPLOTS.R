@@ -7,6 +7,7 @@ library(foreach)
 library(lidR)
 library(parallel)
 library(rgdal)
+library(sf)
 
 plots<-st_read("data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
 dat<-read.csv("data/Terrestrial/field_data.csv")
@@ -23,7 +24,6 @@ cl<-makeCluster(10)
 registerDoSNOW(cl)
 
 foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorhandling = "pass") %dopar% {
-  #plot(itcs[[x]])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
   path_to_tiles<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
