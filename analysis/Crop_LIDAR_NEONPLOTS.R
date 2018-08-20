@@ -17,6 +17,7 @@ OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 #Count trees, only keep basePlots
 Trees<-OSBS %>% group_by(plotID) %>% summarize(Trees=n())
 OSBS_trees<-OSBS_plots %>% inner_join(Trees) %>% filter(subtype=="basePlot")
+OSBS_trees<-st_transform(OSBS_trees,crs=32617)
 
 #Crop lidar by plot extent and write to file
 #cores<-detectCores()
@@ -25,16 +26,16 @@ registerDoSNOW(cl)
 
 foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorhandling = "pass") %dopar% {
 
+  plotid<-OSBS_trees[x,]$plotID
+  plotextent<-extent(OSBS_trees[x,])
+
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
   path_to_tiles<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
 
   #Create raster catalog
   ctg<-catalog(path_to_tiles)
 
-  #create extent polygon
-  e<-extent(OSBS_trees[x,])
-
-  extent_polygon<-as(e,"SpatialPolygons")
+  extent_polygon<-as(plotextent,"SpatialPolygons")
   extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
 
   #clip to extent
@@ -49,7 +50,6 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   canopy_model(clipped_las)
 
   #filename
-  plotid<-OSBS_trees[x,]$plotID
   cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
