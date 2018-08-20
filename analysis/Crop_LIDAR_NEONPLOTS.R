@@ -9,8 +9,8 @@ library(parallel)
 library(rgdal)
 library(sf)
 
-plots<-st_read("data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
-dat<-read.csv("data/Terrestrial/field_data.csv")
+plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
+dat<-read.csv("../data/Terrestrial/field_data.csv")
 OSBS<-dat %>% filter(siteID=="OSBS") %>% droplevels()
 OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 
