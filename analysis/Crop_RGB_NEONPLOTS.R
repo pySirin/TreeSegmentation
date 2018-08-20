@@ -7,6 +7,7 @@ library(foreach)
 library(parallel)
 library(rgdal)
 library(sf)
+library(dplyr)
 
 plots<-st_read("data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
 dat<-read.csv("data/Terrestrial/field_data.csv")
@@ -16,14 +17,18 @@ OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 #Count trees, only keep basePlots
 Trees<-OSBS %>% group_by(plotID) %>% summarize(Trees=n())
 OSBS_trees<-OSBS_plots %>% inner_join(Trees) %>% filter(subtype=="basePlot")
+OSBS_trees<-st_transform(OSBS_trees,crs=32617)
+
+#projection
 
 #Crop lidar by plot extent and write to file
 cl<-makeCluster(10)
 registerDoSNOW(cl)
 
 foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.errorhandling = "pass") %dopar% {
-  #plot(itcs[[x]])
 
+  plotid<-OSBS_trees[x,]$plotID
+  plotextent<-extent(OSBS_trees[x,])
   #Look for corresponding tile
   #get lists of rasters
   inpath<-"/orange/ewhite/NeonData/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01"
@@ -40,7 +45,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
 
     #load raster and check for overlap
     r<-stack(fils[[i]])
-    do_they_intersect<-raster::intersect(extent(r),extent(itcs[[x]]))
+    do_they_intersect<-raster::intersect(extent(r),plotextent)
 
     #Do they intersect?
     if(is.null(do_they_intersect)){
@@ -50,7 +55,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
       j<-j+1
 
       #do they intersect completely? If so, go to next tile
-      if(extent(do_they_intersect)==extent(itcs[[x]])){
+      if(extent(do_they_intersect)==plotextent){
         break
       }
     }
@@ -62,7 +67,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
 
   #If no tile matches, exit.
   if(length(matched_tiles)==0){
-    return(paste("No matches ",unique(itcs[[x]]$Plot_ID)))
+    return(paste("No matches ",plotid))
   }
 
   if(length(matched_tiles)>1){
@@ -72,16 +77,10 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
   }
 
   #Clip matched tile
-  #Create a window of equal size, centered
-  #center point
-
-  #create extent polygon
-  e<-extent(OSBS_trees[x,])
-
-  clipped_rgb<-raster::crop(tile_to_crop,e)
+  clipped_rgb<-raster::crop(tile_to_crop,plotextent)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L3/",unique(itcs[[x]]$Plot_ID),".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L3/",plotid,".tif",sep="")
   print(cname)
 
   #rescale to
