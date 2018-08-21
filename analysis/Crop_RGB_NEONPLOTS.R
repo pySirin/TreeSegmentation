@@ -31,7 +31,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
   plotextent<-extent(OSBS_trees[x,])
   #Look for corresponding tile
   #get lists of rasters
-  inpath<-"/orange/ewhite/NeonData/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01"
+  inpath<-"/orange/ewhite/NeonData/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01"
   fils<-list.files(inpath,full.names = T,pattern=".tif")
   filname<-list.files(inpath,pattern=".tif")
 
