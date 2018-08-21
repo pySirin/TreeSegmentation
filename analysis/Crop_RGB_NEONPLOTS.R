@@ -81,7 +81,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
   clipped_rgb<-raster::crop(tile_to_crop,e)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L3/",plotid,".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L1/",plotid,".tif",sep="")
   print(cname)
 
   #rescale to
