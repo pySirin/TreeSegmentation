@@ -77,10 +77,11 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster"),.erro
   }
 
   #Clip matched tile
-  clipped_rgb<-raster::crop(tile_to_crop,plotextent)
+  e<-as.vector(st_bbox(OSBS_trees[x,]))[c(1, 3, 2, 4)]
+  clipped_rgb<-raster::crop(tile_to_crop,e)
 
   #filename
-  cname<-paste("x",plotid,".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L3/",plotid,".tif",sep="")
   print(cname)
 
   #rescale to
