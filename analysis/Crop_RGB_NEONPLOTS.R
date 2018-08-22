@@ -11,7 +11,7 @@ library(dplyr)
 
 plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
 dat<-read.csv("../data/Terrestrial/field_data.csv")
-OSBS<-dat %>% filter(siteID=="OSBS") %>% droplevels()
+OSBS<-dat %>% filter(siteID=="GRSM") %>% droplevels()
 OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 
 #Count trees, only keep basePlots
@@ -31,7 +31,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),
   plotextent<-extent(OSBS_trees[x,])
   #Look for corresponding tile
   #get lists of rasters
-  inpath<-"/orange/ewhite/NeonData/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L1/Camera/Images/2017092713/V01"
+  inpath<-"/orange/ewhite/NeonData/GRSM/DP1.30010.001/2016/FullSite/D07/2016_GRSM_2/L3/Camera/Mosaic/V01/"
   fils<-list.files(inpath,full.names = T,pattern=".tif")
   filname<-list.files(inpath,pattern=".tif")
 
@@ -81,7 +81,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),
   clipped_rgb<-raster::crop(tile_to_crop,e)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/OSBS/NEONPlots/Camera/L1/",plotid,".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/GRSM/NEONPlots/Camera/L3/",plotid,".tif",sep="")
   print(cname)
 
   #rescale to
