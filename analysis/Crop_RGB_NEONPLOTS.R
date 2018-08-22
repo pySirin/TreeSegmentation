@@ -8,10 +8,11 @@ library(parallel)
 library(rgdal)
 library(sf)
 library(dplyr)
+library(stringr)
 
 plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
 dat<-read.csv("../data/Terrestrial/field_data.csv")
-OSBS<-dat %>% filter(siteID=="GRSM") %>% droplevels()
+OSBS<-dat %>% filter(siteID=="SJER") %>% droplevels()
 OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 
 #Count trees, only keep basePlots
@@ -31,10 +32,12 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),
   plotextent<-extent(OSBS_trees[x,])
   #Look for corresponding tile
   #get lists of rasters
-  inpath<-"/orange/ewhite/NeonData/GRSM/DP1.30010.001/2016/FullSite/D07/2016_GRSM_2/L3/Camera/Mosaic/V01/"
+  inpath<-"/orange/ewhite/NeonData/SJER/DP1.30010.001/2017/FullSite/D17/2017_SJER_2/L1/Camera/Images/2017032816/V01"
   fils<-list.files(inpath,full.names = T,pattern=".tif")
   filname<-list.files(inpath,pattern=".tif")
 
+  #drop summary image
+  fils<-fils[!str_detect(fils,"all_5m")]
   #loop through rasters and look for intersections
   for (i in 1:length(fils)){
 
@@ -44,7 +47,13 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),
     matched_tiles <- vector("list", 10)
 
     #load raster and check for overlap
-    r<-stack(fils[[i]])
+    try(r<-stack(fils[[i]]))
+
+    if(!exists("r")){
+    paste(fils[[i]],"can't be read, skipping...")
+    next
+    }
+
     do_they_intersect<-raster::intersect(extent(r),plotextent)
 
     #Do they intersect?
@@ -81,7 +90,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),
   clipped_rgb<-raster::crop(tile_to_crop,e)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/GRSM/NEONPlots/Camera/L3/",plotid,".tif",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/NEONPlots/Camera/L1/",plotid,".tif",sep="")
   print(cname)
 
   #rescale to
