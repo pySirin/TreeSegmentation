@@ -26,7 +26,7 @@ OSBS_trees<-st_transform(OSBS_trees,crs=32617)
 cl<-makeCluster(10)
 registerDoSNOW(cl)
 
-foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf"),.errorhandling = "pass") %dopar% {
+foreach(x=1:nrow(OSBS_trees),.packages=c("TreeSegmentation","sp","raster","sf","stringr"),.errorhandling = "pass") %dopar% {
 
   plotid<-OSBS_trees[x,]$plotID
   plotextent<-extent(OSBS_trees[x,])
