@@ -18,7 +18,7 @@ OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 #Count trees, only keep basePlots
 Trees<-OSBS %>% group_by(plotID) %>% summarize(Trees=n())
 OSBS_trees<-OSBS_plots %>% inner_join(Trees) %>% filter(subtype=="basePlot")
-OSBS_trees<-st_transform(OSBS_trees,crs=32617)
+OSBS_trees<-st_transform(OSBS_trees,crs=32611)
 
 #projection
 
