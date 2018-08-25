@@ -12,13 +12,13 @@ library(dplyr)
 
 plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
 dat<-read.csv("../data/Terrestrial/field_data.csv")
-OSBS<-dat %>% filter(siteID=="GRSM") %>% droplevels()
+OSBS<-dat %>% filter(siteID=="SJER") %>% droplevels()
 OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]
 
 #Count trees, only keep basePlots
 Trees<-OSBS %>% group_by(plotID) %>% summarize(Trees=n())
 OSBS_trees<-OSBS_plots %>% inner_join(Trees) %>% filter(subtype=="basePlot")
-OSBS_trees<-st_transform(OSBS_trees,crs=32617)
+OSBS_trees<-st_transform(OSBS_trees,crs=32611)
 
 #Crop lidar by plot extent and write to file
 #cores<-detectCores()
@@ -31,10 +31,10 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   plotextent<-extent(OSBS_trees[x,])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/orange/ewhite/NeonData/GRSM/DP1.30003.001/2016/FullSite/D07/2016_GRSM/L1/DiscreteLidar/ClassifiedPointCloud"
+  path_to_tiles<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud"
 
   #Create raster catalog
-  ctg<-catalog(path_to_tiles)
+  ctg<-catalog(path_to_tiles,pattern="cloud.laz")
 
   extent_polygon<-as(plotextent,"SpatialPolygons")
   extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
@@ -51,7 +51,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   canopy_model(clipped_las)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/GRSM/NEONPlots/Lidar/",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/NEONPlots/Lidar",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
