@@ -31,10 +31,10 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   plotextent<-extent(OSBS_trees[x,])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud"
+  path_to_tiles<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/Classified"
 
   #Create raster catalog
-  ctg<-catalog(path_to_tiles,pattern="cloud.laz")
+  ctg<-catalog(path_to_tiles)
 
   extent_polygon<-as(plotextent,"SpatialPolygons")
   extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
