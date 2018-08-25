@@ -6,6 +6,7 @@ library(downloader)
 library(httr)
 library(jsonlite)
 library(sf)
+library(dplyr)
 
 #data products download
 # chemical >>  DP1.10026.001
@@ -20,8 +21,10 @@ library(sf)
 #stack_isotopes_leaf_products(10053)
 
 # get coordinates and position of the vegetation structure trees
-get_vegetation_structure()
+#get_vegetation_structure()
 
 dat<-read.csv("data/Terrestrial/field_data.csv")
 
-OSBS<-dat %>% filter(siteID=="OSBS") %>% droplevels()
+sites<-dat %>% filter(siteID=="SJER") %>% droplevels()
+
+sites %>% group_by(plotID) %>% summarize(n=n())
