@@ -1,5 +1,7 @@
 from_dist_to_utm <- function(dista, angle, xcord, ycord){
 
+  #Angle is expected in degrees.
+
   #Return NA if no angle.
   if(is.na(angle)){
     return(c(NA,NA))

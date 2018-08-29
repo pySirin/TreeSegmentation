@@ -13,7 +13,7 @@ if(testing){
 } else{
 
   #lidar data dir
-  lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/"
+  lidar_dir<-"/orange/ewhite/NeonData/HARV/DP1.30003.001/2017/FullSite/D01/2017_HARV_4/L1/DiscreteLidar/ClassifiedPointCloud"
   #rgb_dir<-"/orange/ewhite/b.weinstein/NEON/D03/OSBS/DP1.30010.001/2017/FullSite/D03/2017_OSBS_3/L3/Camera/Mosaic/V01/"
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
   lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
