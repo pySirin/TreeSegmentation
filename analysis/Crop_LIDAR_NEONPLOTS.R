@@ -31,7 +31,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   plotextent<-extent(OSBS_trees[x,])
 
   #path_to_tiles<-"/Users/ben/Dropbox/Weecology/NEON/"
-  path_to_tiles<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/Classified"
+  path_to_tiles<-"/orange/ewhite/NeonData/HARV/DP1.30003.001/2017/FullSite/D01/2017_HARV_4/L1/DiscreteLidar/ClassifiedPointCloud/"
 
   #Create raster catalog
   ctg<-catalog(path_to_tiles)
@@ -51,7 +51,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   canopy_model(clipped_las)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/NEONPlots/Lidar",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/NEONPlots/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 
