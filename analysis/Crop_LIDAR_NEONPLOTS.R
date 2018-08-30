@@ -51,7 +51,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   canopy_model(clipped_las)
 
   #filename
-  cname<-paste("/orange/ewhite/b.weinstein/NEON/SJER/NEONPlots/Lidar/",plotid,".laz",sep="")
+  cname<-paste("/orange/ewhite/b.weinstein/NEON/HARV/NEONPlots/Lidar/",plotid,".laz",sep="")
   print(cname)
   writeLAS(clipped_las,cname)
 

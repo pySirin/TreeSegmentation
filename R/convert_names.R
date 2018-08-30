@@ -32,11 +32,10 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
       fn<-paste("NEON_D17","_",site,"_DP3_",geo_index,"_image.tif",sep="")
     }
 
-    if(site=="GRSM"){
+    if(site=="HARV"){
       geo_index<-stringr::str_match(lidar,"_(\\d+_\\d+).laz")[,2]
-      fn<-paste("2016_GRSM_2_",geo_index,"_image.tif",sep="")
+      fn<-paste("2017_HARV_4_",geo_index,"_image.tif",sep="")
     }
-
 
     return(fn)
   }
