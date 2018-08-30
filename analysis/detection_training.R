@@ -6,7 +6,7 @@ library(dplyr)
 library(stringr)
 
 testing=F
-site="GRSM"
+site="HARV"
 
 if(testing){
   path<-"../data/2017/Lidar/OSBS_006.laz"
@@ -25,7 +25,6 @@ if(testing){
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
-  #Take out colorized
   cl<-makeCluster(10)
   registerDoSNOW(cl)
 
@@ -37,7 +36,7 @@ if(testing){
     flag<-rgb_path %in% rgb_files
 
     if(flag){
-      detection_training(path=lidar_files[x],site="HARV")
+      detection_training(path=lidar_files[x],site=site)
     } else{
       return("Failed check_tile")
     }

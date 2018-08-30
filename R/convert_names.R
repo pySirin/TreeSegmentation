@@ -33,7 +33,7 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
     }
 
     if(site=="HARV"){
-      geo_index<-stringr::str_match(lidar,"_(\\d+_\\d+).laz")[,2]
+      geo_index<-stringr::str_match(lidar,"_(\\d+_\\d+)_classified_point_cloud.laz")[,2]
       fn<-paste("2017_HARV_4_",geo_index,"_image.tif",sep="")
     }
 
