@@ -9,6 +9,7 @@ library(sf)
 library(dplyr)
 library(maptools)
 library(raster)
+library(tidyr)
 #data products download
 # chemical >>  DP1.10026.001
 # isotopes >> DP1.10053.001
@@ -22,11 +23,11 @@ library(raster)
 #stack_isotopes_leaf_products(10053)
 
 # get coordinates and position of the vegetation structure trees
-#get_vegetation_structure()
+get_vegetation_structure()
 
 dat<-read.csv("data/Terrestrial/field_data.csv")
 
-sites<-dat %>% filter(siteID=="OSBS") %>% droplevels()
+sites<-dat %>% filter(siteID=="SJER") %>% droplevels()
 
 #accepted species list
 species<-read.csv("data/NEONPlots/AcceptedSpecies.csv")
@@ -40,10 +41,9 @@ sites <- sites %>% filter(scientificName %in% species$scientificName)
 sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
 
 #for each plot, max n over years
-
 sites %>% group_by(plotID,eventID) %>% summarise(n=n()) %>% spread(eventID,n) %>% filter(!is.na(vst_OSBS_2017))
 treecount<-sites %>% group_by(plotID,eventID) %>% summarise(n=n()) %>% group_by(plotID) %>% summarize(n=max(n))
-write.csv(treecount,"data/NEONPlots/OSBS/treecount.csv")
+write.csv(treecount,"data/NEONPlots/SJER/treecount.csv")
 
 #Individual trees
 trees<-sites  %>% filter(!is.na(UTM_E))
@@ -52,7 +52,7 @@ trees<-sites  %>% filter(!is.na(UTM_E))
 ptrees<-unique(trees$plotID)
 for(x in ptrees){
   pts<-trees %>% filter(plotID == x)
-  filname<-paste("data/NEONPlots/OSBS/Camera/L3/",x,".tif",sep="")
+  filname<-paste("data/NEONPlots/SJER/Camera/L3/",x,".tif",sep="")
   if(file.exists(filname)){
     r<-stack(filname)
   } else{

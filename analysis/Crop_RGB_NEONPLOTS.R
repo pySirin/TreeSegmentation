@@ -10,7 +10,9 @@ library(sf)
 library(dplyr)
 library(stringr)
 
-plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V4/All_Neon_TOS_Polygon_V4.shp")
+#Take the centroid and 10m on either side of the bounding box.
+
+plots<-st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Polygons_V5.shp")
 dat<-read.csv("../data/Terrestrial/field_data.csv")
 OSBS<-dat %>% filter(siteID=="HARV") %>% droplevels()
 OSBS_plots<-plots[plots$plotID %in% OSBS$plotID,]

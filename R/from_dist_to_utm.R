@@ -1,3 +1,12 @@
+#' Convert coordinates to utms
+#' \code{from_dist_to_utm} converts azimuth distance to utm coodinates
+#' @param dista Distance from point
+#' @param angle Angle from point
+#' @param xcord X distance
+#' @param ycord Y distance
+#' @return A stacked file in /data/ with desired product across sites
+#' @export
+#'
 from_dist_to_utm <- function(dista, angle, xcord, ycord){
 
   #Angle is expected in degrees.

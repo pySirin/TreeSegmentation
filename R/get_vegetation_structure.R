@@ -5,21 +5,23 @@
 #' @export
 #'
 get_vegetation_structure <- function(path){
-  file_tos_coordinates = read_csv("data/Terrestrial/filesToStack10098/stackedFiles/vst_perplotperyear.csv") %>%
-    select(c("plotID","plotType", "utmZone", "easting", "northing", "coordinateUncertainty", "nlcdClass"))
 
+  #TODO: Add subplotypes, canopy position variable, growth form field to the joint table
   file_mapping = read_csv("data/Terrestrial/filesToStack10098/stackedFiles/vst_mappingandtagging.csv") %>%
     select(c("uid", "eventID", "domainID","siteID","plotID","subplotID",
              "nestedSubplotID","pointID","stemDistance","stemAzimuth",
              "cfcOnlyTag","individualID","supportingStemIndividualID","previouslyTaggedAs",
              "taxonID","scientificName"))
-  dat = inner_join(file_mapping,file_tos_coordinates,  by = "plotID") %>%
-    unique
+
+  plots<-sf::st_read("data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Points_V5.shp")  %>% filter(str_detect(appMods,"vst"))
+  dat<-file_mapping %>% mutate(pointID=as.factor(pointID)) %>% left_join(plots,by=c("plotID","pointID"))
 
   # get tree coordinates
   dat_apply <- dat %>%
     select(c(stemDistance, stemAzimuth, easting, northing))
-  coords <- apply(dat_apply,1,function(params)from_dist_to_utm(params[1],params[2], params[3], params[4])) %>%
+  coords <- apply(dat_apply,1,function(params) {
+    from_dist_to_utm(params[1],params[2], params[3], params[4])
+    }) %>%
     t %>%
     data.frame
   colnames(coords) <- c('UTM_E', 'UTM_N')
