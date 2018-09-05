@@ -1,14 +1,9 @@
-### Clip RGB Data Based on Neon Plots ###
-library(maptools)
-library(raster)
-library(TreeSegmentation)
-library(doSNOW)
-library(foreach)
-library(parallel)
-library(rgdal)
-library(dplyr)
-library(stringr)
-
+#' Clip RGB Data Based on Neon Plots
+#' \code{crop_rgb_plots} overlays the polygons of the NEON plots with the RGB airborne data
+#' @param siteID NEON site abbreviation (e.g. "HARV")
+#' @return Saved tif files for each plot
+#' @export
+#'
 crop_rgb_plots<-function(siteID="HARV"){
   #Take the centroid and 10m on either side of the bounding box.
 
@@ -16,7 +11,6 @@ crop_rgb_plots<-function(siteID="HARV"){
   dat<-read.csv("../data/Terrestrial/field_data.csv")
   site<-dat %>% filter(siteID==siteID) %>% droplevels()
   site_plots<-plots[plots$plotID %in% site$plotID,]
-
 
   #get lists of rasters
   inpath<-paste("/orange/ewhite/NeonData/",siteID,"/DP1.30010.001/",sep="")
