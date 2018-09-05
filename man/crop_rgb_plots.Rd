@@ -2,8 +2,7 @@
 % Please edit documentation in R/crop_rgb_plots.R
 \name{crop_rgb_plots}
 \alias{crop_rgb_plots}
-\title{Clip RGB Data Based on Neon Plots
-\code{crop_rgb_plots} overlays the polygons of the NEON plots with the RGB airborne data}
+\title{Clip RGB Data Based on Neon Plots}
 \usage{
 crop_rgb_plots(siteID = "HARV")
 }
@@ -14,6 +13,5 @@ crop_rgb_plots(siteID = "HARV")
 Saved tif files for each plot
 }
 \description{
-Clip RGB Data Based on Neon Plots
 \code{crop_rgb_plots} overlays the polygons of the NEON plots with the RGB airborne data
 }

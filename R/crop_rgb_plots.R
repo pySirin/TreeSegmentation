@@ -1,4 +1,5 @@
 #' Clip RGB Data Based on Neon Plots
+#'
 #' \code{crop_rgb_plots} overlays the polygons of the NEON plots with the RGB airborne data
 #' @param siteID NEON site abbreviation (e.g. "HARV")
 #' @return Saved tif files for each plot
