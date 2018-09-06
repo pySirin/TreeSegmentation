@@ -2,6 +2,7 @@
 
 #devtools::install_github("Weecology/Neon-Utilities/neonUtilities",dependencies=F)
 library(neonUtilities)
+library(TreeSegmentation)
 library(dplyr)
 
 ###Download tiles
