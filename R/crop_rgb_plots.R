@@ -8,8 +8,8 @@
 #'
   crop_rgb_plots<-function(siteID="HARV"){
 
-    plots<-sf::st_read("data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Polygons_V5.shp")
-    dat<-read.csv("data/Terrestrial/field_data.csv")
+    plots<-sf::st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Polygons_V5.shp")
+    dat<-read.csv("../data/Terrestrial/field_data.csv")
     site<-dat[dat$siteID %in% siteID,]
     site_plots<-plots[plots$plotID %in% site$plotID,]
     #Only baseplots
