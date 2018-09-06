@@ -47,9 +47,9 @@ crop_lidar_plots<-function(siteID="HARV"){
     clipped_las<-lidR::lasclip(ctg,extent_polygon)
 
     #if null, return NA
-    if(is.null("clipped_las")){
-      return(NA)
-    }
+    if(is.null(clipped_las)){
+      next
+      }
     #Create directory if needed
     fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Lidar/",sep="")
     if(!dir.exists(fold)){
