@@ -1,6 +1,6 @@
 #' Clip Lidar Data Based on Neon Plots
 #'
-#' \code{crop_lidar_plots} overlays the polygons of the NEON plots with the RGB airborne data
+#' \code{crop_lidar_plots} overlays the polygons of the NEON plots with the lidar airborne data
 #' @param siteID NEON site abbreviation (e.g. "HARV")
 #' @return Saved tif files for each plot
 #' @importFrom magrittr "%>%"
@@ -20,43 +20,47 @@ crop_lidar_plots<-function(siteID="HARV"){
   fils<-list.files(inpath,full.names = T,pattern=".laz",recursive = T)
   filname<-list.files(inpath,pattern=".tif",recursive = T)
 
-  #drop summary image
+  #find classified directory
   fils<-fils[stringr::str_detect(fils,"_classified_")]
+  path_to_tiles<-dirname(fils[1])
 
-  #grab the first raster for crs
-  r<-raster::stack(fils[1])
+  #grab the first cloud for crs
+  r<-lidR::readLAS(fils[1])
+
   #Project
-  site_plots<-sf::st_transform(site_plots,crs=raster::projection(r))
+  site_plots<-sf::st_transform(site_plots,crs= as.character(r@crs))
+
+  #create lidar catalog
+  ctg<-lidR::catalog(path_to_tiles)
 
   #Crop by plot extent and write to file
 
   for(x in 1:nrow(site_plots)){
 
     plotid<-site_plots[x,]$plotID
-
     plotextent<-raster::extent(site_plots[x,])
-
-    #Create raster catalog
-    ctg<-catalog(path_to_tiles)
 
     extent_polygon<-as(plotextent,"SpatialPolygons")
     extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
 
     #clip to extent
-    clipped_las<-lasclip(ctg,extent_polygon)
+    clipped_las<-lidR::lasclip(ctg,extent_polygon)
 
     #if null, return NA
     if(is.null("clipped_las")){
       return(NA)
     }
+    #Create directory if needed
+    fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Lidar/",sep="")
+    if(!dir.exists(fold)){
+      dir.create(fold,recursive = T)
+    }
 
-    #Make canopy model
-    #canopy_model(clipped_las)
-
-    #filename
-    cname<-paste("/orange/ewhite/b.weinstein/NEON/HARV/NEONPlots/Lidar/",plotid,".laz",sep="")
+    #construct filename
+    cname<-paste(fold,plotid,".laz",sep="")
     print(cname)
-    writeLAS(clipped_las,cname)
+
+    lidR::writeLAS(clipped_las,cname)
 
   }
 }
