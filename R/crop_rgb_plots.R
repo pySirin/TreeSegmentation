@@ -36,12 +36,13 @@
       plotextent<-raster::extent(site_plots[x,])
       #Look for corresponding tile
       #loop through rasters and look for intersections
+      #empty vector to hold tiles
+      matched_tiles <- vector("list", 10)
+
       for (i in 1:length(fils)){
 
         #set counter for multiple tiles
         j=1
-        #empty vector to hold tiles
-        matched_tiles <- vector("list", 10)
 
         #load raster and check for overlap
         try(r<-raster::stack(fils[[i]]))
