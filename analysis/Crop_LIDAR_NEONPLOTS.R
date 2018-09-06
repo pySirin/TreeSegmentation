@@ -48,7 +48,7 @@ foreach(x=1:nrow(OSBS_trees),.packages=c("lidR","TreeSegmentation","sp"),.errorh
   }
 
   #Make canopy model
-  canopy_model(clipped_las)
+  #canopy_model(clipped_las)
 
   #filename
   cname<-paste("/orange/ewhite/b.weinstein/NEON/HARV/NEONPlots/Lidar/",plotid,".laz",sep="")

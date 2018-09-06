@@ -90,7 +90,7 @@
       #Create directory if needed
       fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Camera/L3/",sep="")
       if(!dir.exists(fold)){
-        dir.create(fold)
+        dir.create(fold,recursive = T)
       }
 
       #construct filename
