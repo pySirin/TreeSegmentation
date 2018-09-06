@@ -15,12 +15,18 @@
     #Only baseplots
     site_plots<-site_plots[site_plots$subtype=="basePlot",]
 
+    #if no rows
+    if(nrow(site_plots)==0){
+      stop("No site plots with given name")
+    }
+
     #get lists of rasters
     inpath<-paste("/orange/ewhite/NeonData/",siteID,"/DP1.30010.001/",sep="")
     fils<-list.files(inpath,full.names = T,pattern=".tif",recursive = T)
     filname<-list.files(inpath,pattern=".tif",recursive = T)
-    #drop summary image
+    #drop summary image and L1 data
     fils<-fils[!stringr::str_detect(fils,"all_5m")]
+    fils<-fils[stringr::str_detect(fils,"L3")]
 
     #grab the first raster for crs
     r<-raster::stack(fils[1])
