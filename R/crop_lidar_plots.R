@@ -33,14 +33,26 @@ crop_lidar_plots<-function(siteID="HARV"){
   #create lidar catalog
   ctg<-lidR::catalog(path_to_tiles)
 
-  #Crop by plot extent and write to file
+  #Create directory if needed
+  fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Lidar/",sep="")
+  if(!dir.exists(fold)){
+    dir.create(fold,recursive = T)
+  }
 
   for(x in 1:nrow(site_plots)){
 
     plotid<-site_plots[x,]$plotID
     plotextent<-raster::extent(site_plots[x,])
 
-    #prblem here, how to export as.
+    #construct filename
+    cname<-paste(fold,plotid,".laz",sep="")
+    print(cname)
+
+    #Check if already complete
+    if(file.exists(cname)){
+      next
+    }
+
     extent_polygon<-methods::as(plotextent,"SpatialPolygons")
     extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
 
@@ -51,15 +63,6 @@ crop_lidar_plots<-function(siteID="HARV"){
     if(is.null(clipped_las)){
       next
       }
-    #Create directory if needed
-    fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Lidar/",sep="")
-    if(!dir.exists(fold)){
-      dir.create(fold,recursive = T)
-    }
-
-    #construct filename
-    cname<-paste(fold,plotid,".laz",sep="")
-    print(cname)
 
     lidR::writeLAS(clipped_las,cname)
 

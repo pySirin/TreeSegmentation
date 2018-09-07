@@ -13,5 +13,5 @@ crop_lidar_plots(siteID = "HARV")
 Saved tif files for each plot
 }
 \description{
-\code{crop_lidar_plots} overlays the polygons of the NEON plots with the RGB airborne data
+\code{crop_lidar_plots} overlays the polygons of the NEON plots with the lidar airborne data
 }

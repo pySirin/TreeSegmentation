@@ -33,13 +33,28 @@
     #Project
     site_plots<-sf::st_transform(site_plots,crs=raster::projection(r))
 
+    #Create directory if needed
+    fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Camera/L3/",sep="")
+    if(!dir.exists(fold)){
+      dir.create(fold,recursive = T)
+    }
+
     #Crop by plot extent and write to file
 
     for(x in 1:nrow(site_plots)){
 
       plotid<-site_plots[x,]$plotID
-
       plotextent<-raster::extent(site_plots[x,])
+
+      #construct filename
+      cname<-paste(fold,plotid,".tif",sep="")
+      print(cname)
+
+      #Check if already complete
+      if(file.exists(cname)){
+        next
+      }
+
       #Look for corresponding tile
       #loop through rasters and look for intersections
       #empty vector to hold tiles
@@ -93,15 +108,6 @@
       e<-as.vector(sf::st_bbox(site_plots[x,]))[c(1, 3, 2, 4)]
       clipped_rgb<-raster::crop(tile_to_crop,e)
 
-      #Create directory if needed
-      fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Camera/L3/",sep="")
-      if(!dir.exists(fold)){
-        dir.create(fold,recursive = T)
-      }
-
-      #construct filename
-      cname<-paste(fold,plotid,".tif",sep="")
-      print(cname)
 
       #rescale to
       raster::writeRaster(clipped_rgb,cname,overwrite=T,datatype='INT1U')
