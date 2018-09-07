@@ -22,6 +22,12 @@ crop_lidar_plots<-function(siteID="HARV"){
 
   #find classified directory
   fils<-fils[stringr::str_detect(fils,"_classified_")]
+
+  if (length(fils)==0){
+    print(paste(siteID,"No lidar files available"))
+    return(NULL)
+  }
+
   path_to_tiles<-dirname(fils[1])
 
   #grab the first cloud for crs

@@ -28,6 +28,11 @@
     fils<-fils[!stringr::str_detect(fils,"all_5m")]
     fils<-fils[stringr::str_detect(fils,"L3")]
 
+    if (length(fils)==0){
+      print(paste(siteID,"No rgb files available"))
+      return(NULL)
+    }
+
     #grab the first raster for crs
     r<-raster::stack(fils[1])
     #Project
