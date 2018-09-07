@@ -40,7 +40,8 @@ crop_lidar_plots<-function(siteID="HARV"){
     plotid<-site_plots[x,]$plotID
     plotextent<-raster::extent(site_plots[x,])
 
-    extent_polygon<-as(plotextent,"SpatialPolygons")
+    #prblem here, how to export as.
+    extent_polygon<-methods::as(plotextent,"SpatialPolygons")
     extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
 
     #clip to extent
