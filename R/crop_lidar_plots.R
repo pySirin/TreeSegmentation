@@ -46,10 +46,10 @@ crop_lidar_plots<-function(siteID="HARV"){
 
     #construct filename
     cname<-paste(fold,plotid,".laz",sep="")
-    print(cname)
 
     #Check if already complete
     if(file.exists(cname)){
+      print(paste(cname,"exists"))
       next
     }
 
@@ -65,6 +65,7 @@ crop_lidar_plots<-function(siteID="HARV"){
       }
 
     lidR::writeLAS(clipped_las,cname)
+    print(cname)
 
   }
 }

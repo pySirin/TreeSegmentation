@@ -6,6 +6,8 @@ library(TreeSegmentation)
 library(dplyr)
 
 ###Download RGB and LIDAR tiles
+
+c("MOAB","BONA","CLBJ","HARV","KONZ","NIWO","OSBS","SJER","WREF","JORN","MLBS","ORNL","SCBI","STEI","TALL","WOOD")
 site="NIWO"
 fold<-paste("/orange/ewhite/NeonData/",site,sep="")
 byPointsAOP(dpID="DP1.30010.001",site=site,year="2017",check.size=F, savepath=fold,allSites=F)
