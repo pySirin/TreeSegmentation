@@ -15,6 +15,12 @@ crop_lidar_plots<-function(siteID="HARV"){
   #Only baseplots
   site_plots<-site_plots[site_plots$subtype=="basePlot",]
 
+  #if no rows
+  if(nrow(site_plots)==0){
+    print("No site plots with given name")
+    return(NULL)
+  }
+
   #get lists of rasters
   inpath<-paste("/orange/ewhite/NeonData/",siteID,"/DP1.30003.001/",sep="")
   fils<-list.files(inpath,full.names = T,pattern=".laz",recursive = T)

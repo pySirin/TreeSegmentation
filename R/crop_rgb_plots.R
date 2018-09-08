@@ -17,7 +17,8 @@
 
     #if no rows
     if(nrow(site_plots)==0){
-      stop("No site plots with given name")
+      print("No site plots with given name")
+      return(NULL)
     }
 
     #get lists of rasters
