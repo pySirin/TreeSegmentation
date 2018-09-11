@@ -8,7 +8,7 @@ library(foreach)
 #site<-c()
 site<-c("TOOL","SRER","PUUM","ONAQ","ORNL","GUAN","CPER","BART","ABBY","DCFS","DSNY","HEAL","JERC","LAJA","LENO","NOGP","RMNP","SOAP","TEAK","TREE","UKFS","UNDE","MOAB","BONA","CLBJ","HARV","KONZ","NIWO","OSBS","SJER","WOOD","UNDE","WREF","JORN","MLBS","ORNL","SCBI","STEI","TALL")
 
-cl<-makeCluster(10)
+cl<-makeCluster(10,outfile="")
 registerDoSNOW(cl)
 
 foreach(x=1:length(site),.packages=c("neonUtilities","TreeSegmentation","dplyr"),.errorhandling = "pass") %dopar% {
