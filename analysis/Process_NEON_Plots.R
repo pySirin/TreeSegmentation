@@ -3,6 +3,7 @@
 #devtools::install_github("Weecology/Neon-Utilities/neonUtilities",dependencies=F)
 
 library(foreach)
+library(doSNOW)
 
 ###Download RGB and LIDAR, HyperSpec tiles
 #site<-c()
