@@ -51,7 +51,7 @@ trees<-sites  %>% filter(!is.na(UTM_E))
 #plots with trees
 ptrees<-unique(trees$plotID)
 for(x in ptrees){
-  pts<-trees %>% filter(plotID == x,eventID=="vst_OSBS_2014")
+  pts<-trees %>% filter(plotID == x)
   filname<-paste("data/NEONPlots/OSBS/Camera/L3/",x,".tif",sep="")
   if(file.exists(filname)){
     r<-stack(filname)
