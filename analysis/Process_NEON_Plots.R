@@ -14,9 +14,9 @@ registerDoSNOW(cl)
 
 foreach(x=1:length(sites),.packages=c("neonUtilities","TreeSegmentation","dplyr"),.errorhandling = "pass") %dopar% {
   fold<-paste("/orange/ewhite/NeonData/",sites[x],sep="")
-  #byPointsAOP(dpID="DP1.30010.001",site=sites[x],year="2017",check.size=F, savepath=fold)
-  #byPointsAOP(dpID="DP1.30010.001",site=sites[x],year="2018",check.size=F, savepath=fold)
-  byPointsAOP(dpID="DP1.30003.001",site=sites[x],year="2018",check.size=F, savepath=fold)
+  byPointsAOP(dpID="DP3.30010.001",site=sites[x],year="2017",check.size=F, savepath=fold)
+  byPointsAOP(dpID="DP3.30010.001",site=sites[x],year="2018",check.size=F, savepath=fold)
+  #byPointsAOP(dpID="DP3.30003.001",site=sites[x],year="2018",check.size=F, savepath=fold)
   #byPointsAOP(dpID="DP1.30006.001",site=sites[x],year="2017",check.size=F, savepath=fold)
   ##Cut Tiles
   #crop_rgb_plots(sites[x])

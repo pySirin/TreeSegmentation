@@ -4,7 +4,7 @@
 \alias{watershed}
 \title{Find tree crown polygons using a simple watershed algorithm}
 \usage{
-watershed(path = NULL, tile = NULL, output = "all")
+watershed(path = NULL, tile = NULL, output = "all", proj4)
 }
 \arguments{
 \item{path}{Character. A filename of a .las or .laz file to be read in by the lidR package, see \code{\link[lidR]{readLAS}}}

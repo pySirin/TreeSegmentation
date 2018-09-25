@@ -7,11 +7,11 @@
 #' convex_hulls <- watershed(path=LASfile)
 #' @export
 
-watershed<-function(path=NULL,tile=NULL,output="all"){
+watershed<-function(path=NULL,tile=NULL,output="all",proj4){
 
   if(is.null(tile)){
     tile = lidR::readLAS(path, filter = "-drop_z_below 0")
-    tile@crs<-CRS("+init=epsg:32617")
+    tile@crs<-CRS(proj4)
   }
 
   #Read in tile

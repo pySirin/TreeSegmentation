@@ -4,7 +4,7 @@
 \alias{dalponte2016}
 \title{Find tree crown polygons using the Dalponte 2016 algorithm}
 \usage{
-dalponte2016(path = NULL, tile = NULL, output = "all")
+dalponte2016(path = NULL, tile = NULL, output = "all", proj4)
 }
 \arguments{
 \item{path}{Character. A filename of a .las or .laz file to be read in by the lidR package, see \code{\link[lidR]{readLAS}}}

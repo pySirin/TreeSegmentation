@@ -32,8 +32,13 @@ get_convex_hulls<-function(tile,ID){
     tree_polygons[[x]]@polygons[[1]]@ID<-names(split_trees)[x]
   }
 
-  #bind into large SpatialPolygonsDataframe
-  convex_polygons<-do.call(raster::bind,unlist(tree_polygons))
+  if(length(tree_polygons)>1){
+    #bind into large SpatialPolygonsDataframe if more than one
+    convex_polygons<-do.call(raster::bind,unlist(tree_polygons))
+  } else{
+    convex_polygons<-tree_polygons[[1]]
+  }
+
 
   #make into sp dataframe
   IDs <- sapply(slot(convex_polygons, "polygons"), function(x) slot(x, "ID"))

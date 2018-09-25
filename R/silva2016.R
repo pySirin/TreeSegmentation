@@ -7,11 +7,11 @@
 #' convex_hulls <- silva2016(path=LASfile)
 #' @export
 
-silva2016<-function(path=NULL,tile=NULL,output=c("all"),ground=T){
+silva2016<-function(path=NULL,tile=NULL,output=c("all"),ground=T,proj4){
 
   if(is.null(tile)){
     tile = lidR::readLAS(path, filter = "-drop_z_below 0")
-    tile@crs<-sp::CRS("+init=epsg:32617")
+    tile@crs<-sp::CRS(proj4)
   }
 
   #Read in tile

@@ -1,6 +1,6 @@
 #' Wrapper for calculating recall statistics for NEON tree centroids.
 #'
-#' \code{evaluateRecall} computes an lidar based segmentation, assigns polygons to closest match and calculates recall statistic
+#' \code{evaluateNeon} computes an lidar based segmentation, assigns polygons to closest match and calculates recall statistic
 #' @param ground_truth SpatialPolygonDataFrame of ground truth polygons
 #' @param algorithm  Character. A vector of lidar unsupervised classification algorithm(s). Currently "silva","dalponte","li" and "watershed" are implemented. See \code{\link[lidR]{lastrees}}
 #' @param path_to_tiles Character. Location of lidar tiles on system.
@@ -10,26 +10,18 @@
 #' @return dataframe of the jaccard overlap among polygon pairs for each selected method. If extra=T, \code{evaluate} will return a list object of results, predicted polygons, as well as output lidR tiles. See e.g. \code{\link{silva2016}}
 #' @export
 #'
-evaluateNeon<-function(site,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F,basemap=""){
+evaluateNeon<-function(trees,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F,basemap="",proj4="+init=epsg:32611"){
 
-  dat<-read.csv("../data/Terrestrial/field_data.csv")
-
-  sites<-dat %>% filter(siteID==site) %>% droplevels()
-
-  #accepted species list
-  species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
-  species<-species %>% filter(siteID %in% sites$siteID)
-
-  #filter data by species
-  sites <- sites %>% filter(scientificName %in% species$scientificName)
-
-  #search for duplicates, ending in a letter
-  sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
-
-  #Individual trees
-  trees<-sites  %>% filter(!is.na(UTM_E))
-
+  #Select points for the plot
   pts<-trees[trees$plotID %in% plotID,]
+
+  if(nrow(pts)==0){
+    print("No points in plot")
+    return(NULL)
+  }
+
+  pts<-SpatialPoints(cbind(pts$UTM_E,pts$UTM_N))
+
   inpath<-paste(path_to_tiles,plotID,".laz",sep="")
 
   #Sanity check, does the file exist?
@@ -43,38 +35,43 @@ evaluateNeon<-function(site,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,
   tiles<-list()
   if("silva" %in% algorithm){
     print("Silva")
-    silva<-silva2016(path=inpath)
+    silva<-silva2016(path=inpath,proj4=proj4)
     predictions$silva<-silva$convex
     tiles$silva<-silva$tile
   }
 
   if("dalponte" %in% algorithm){
     print("Dalponte")
-    dalponte<-dalponte2016(path=inpath)
+    dalponte<-dalponte2016(path=inpath,proj4=proj4)
     predictions$dalponte<-dalponte$convex
     tiles$dalponte<-dalponte$tile
   }
 
   if("li" %in% algorithm){
     print("li")
-    li<-li2012(path=inpath)
+    li<-li2012(path=inpath,proj4=proj4)
     predictions$li<-li$convex
     tiles$li<-li$tile
   }
 
   if("watershed" %in% algorithm){
     print("Watershed")
-    watershed_result<-watershed(path=inpath)
+    watershed_result<-watershed(path=inpath,proj4=proj4)
     predictions$watershed<-watershed_result$convex
     tiles$watershed<-watershed_result$tile
   }
 
 
   #For each method compute result statistics
+
+  #set CRS
+  raster::projection(pts)<-predictions[[1]]@proj4string
+
   statdf<-list()
   for(i in 1:length(predictions)){
-    plot(predictions[[i]])
-    points(SpatialPoints(cbind(pts$UTM_E,pts$UTM_N)))
+      inside <- !is.na(over(pts, as(predictions[[i]], "SpatialPolygons")))
+      Recall<-sum(inside)/length(inside)
+      statdf[[i]]<-data.frame(Method=names(predictions)[i],Recall)
   }
 
   statdf<-dplyr::bind_rows(statdf)
@@ -82,19 +79,17 @@ evaluateNeon<-function(site,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,
   #if plot, overlay ground truth and predictions
   if(plot_results){
     #which was the best performing method
-    best_method<-statdf %>% group_by(Method) %>% summarize(m=mean(IoU)) %>% arrange(desc(m))
-    ortho<-raster::stack(paste(basemap,unique(ground_truth$Plot_ID),".tif",sep=""))
-    png(paste("plots/evaluation/",unique(ground_truth$Plot_ID),".png",sep=""))
+    best_method<-statdf %>% arrange(desc(Recall))
+    ortho<-raster::stack(paste(basemap,plotID,".tif",sep=""))
+    png(paste("plots/Recall/",plotID,".png",sep=""))
     par(oma=c(0,0,2,0))
-    raster::plotRGB(ortho,main=paste(unique(ground_truth$Plot_ID),":",best_method$Method[1],"=",round(best_method$m[1],2)),axes=T)
-    plot(pts,border="red",add=TRUE)
-    plot(predictions[[best_method$Method[1]]],add=T,border="black")
+    raster::plotRGB(ortho,main=paste(plotID,":",best_method$Method[1],"=",round(best_method$Recall[1],2)),axes=T)
+    plot(pts,col="red",add=TRUE,pch=1)
+    plot(predictions[[best_method$Method[1]]],add=T,border="white",axes=F)
     title()
     dev.off()
   }
-  if(extra){
-    return(list(results=statdf,predictions=predictions,tiles=tiles))
-  } else{
-    return(statdf)
-  }
+
+    return(inside)
+
 }

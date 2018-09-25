@@ -7,11 +7,11 @@
 #' convex_hulls <- dalponte2016(path=LASfile)
 #' @export
 
-dalponte2016<-function(path=NULL,tile=NULL,output="all"){
+dalponte2016<-function(path=NULL,tile=NULL,output="all",proj4){
 
   if(is.null(tile)){
     tile = lidR::readLAS(path, filter = "-drop_z_below 0")
-    tile@crs<-sp::CRS("+init=epsg:32617")
+    tile@crs<-sp::CRS(proj4)
   }
 
   #Read in tile

@@ -4,7 +4,7 @@
 \alias{li2012}
 \title{Find tree crown polygons using the Li (2012) algorithm}
 \usage{
-li2012(path = NULL, tile = NULL, output = "all")
+li2012(path = NULL, tile = NULL, output = "all", proj4)
 }
 \arguments{
 \item{path}{Character. A filename of a .las or .laz file to be read in by the lidR package, see \code{\link[lidR]{readLAS}}}

@@ -5,6 +5,7 @@
 #' @param plot Whether to plot the results for visualization
 #' @return A \code{\link[sp]{SpatialPolygons}} object containing a convex hull based on input points.
 #'
+#' @export
 convex_hull<-function(x,plot=FALSE){
   ch<-grDevices::chull(x$X,x$Y)
   poly_coords<-x[c(ch,ch[1]),c("X","Y")]

@@ -31,6 +31,7 @@ site="SJER"
 
 #set data paths
 path_to_tiles=paste("../data/NeonPlots/",site,"/Lidar/",sep="")
+basemap=paste("../data/NeonPlots/",site,"/Camera/L3/",sep="")
 
 #set cores
 cores<-2
@@ -39,38 +40,35 @@ cores<-2
 
 # Load in ground-truth
 ```{r,results='hide'}
+dat<-read.csv("../data/Terrestrial/field_data.csv")
 
+sites<-dat %>% filter(siteID==site) %>% droplevels()
+
+#accepted species list
+species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
+species<-species %>% filter(siteID %in% sites$siteID)
+
+#filter data by species
+sites <- sites %>% filter(scientificName %in% species$scientificName)
+
+#search for duplicates, ending in a letter
+sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
+
+#Individual trees
+trees<-sites  %>% filter(!is.na(UTM_E))
+
+#get tiles to evaluate, match with deep learning 
+rgb_tiles<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,sep=""))
+plotIDs<-str_match(rgb_tiles,"(SJER_\\d+).tif")[,2]
+plotIDs<-plotIDs[!is.na(plotIDs)]
+
+recalls=list()
+  for(x in 1:length(plotIDs)){
+    recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,proj4="+init=epsg:32611",plot_results=T)
+  }
+
+#remove empty rows
+print(sum(unlist(recalls))/length(unlist(recalls)))
 
 ```
-
-```{r}
-ptrees<-unique(trees$plotID)
-for(x in ptrees){
-
-}
-
-```
-
-# As a wrapper for one tile, multiple methods
-```{r,eval=F}
-results<-evaluate(ground_truth=itcs[[2]],algorithm = c("silva"),path_to_tiles=path_to_tiles,plot_results=T,basemap="../data/2015/Camera/")
-
-ggplot(results,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
-results %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU))
-```
-
-# Parallel wrapper across all tiles
-
-```{r,eval=T}
-system.time(results_all<-evaluate_all(itcs=itcs,algorithm = c("silva"),path_to_tiles=path_to_tiles,cores=1,extra=F,plot_results = T,basemap="../data/2017/Camera/L3/"))
-
-#plot results
-ggplot(results_all,aes(y=IoU,x=Method)) + geom_boxplot() + theme_bw()
-
-#Compute test statistics
-test_statistic<-results_all %>% group_by(Method) %>% summarize(mean=mean(IoU),median=median(IoU)) %>% mutate(Date=format(Sys.time(), "%m/%d/%y %H:%M:%S"))
-test_statistic
-write.table(test_statistic,"Results/results.csv",append = T,col.names = F,sep=",",row.names = F)
-```
-
 
