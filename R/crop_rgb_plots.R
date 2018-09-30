@@ -6,7 +6,7 @@
 #' @importFrom magrittr "%>%"
 #' @export
 #'
-  crop_rgb_plots<-function(siteID="HARV"){
+  crop_rgb_plots<-function(siteID="SJER",year="2018"){
 
     plots<-sf::st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Polygons_V5.shp")
     dat<-read.csv("../data/Terrestrial/field_data.csv")
@@ -22,12 +22,15 @@
     }
 
     #get lists of rasters
-    inpath<-paste("/orange/ewhite/NeonData/",siteID,"/DP1.30010.001/",sep="")
+    inpath<-paste("/orange/ewhite/NeonData/",siteID,"/DP3.30010.001/",sep="")
     fils<-list.files(inpath,full.names = T,pattern=".tif",recursive = T)
     filname<-list.files(inpath,pattern=".tif",recursive = T)
     #drop summary image and L1 data
     fils<-fils[!stringr::str_detect(fils,"all_5m")]
     fils<-fils[stringr::str_detect(fils,"L3")]
+
+    #get current year
+    fils<-fils[stringr::str_detect(fils,year)]
 
     if (length(fils)==0){
       print(paste(siteID,"No rgb files available"))
@@ -40,7 +43,7 @@
     site_plots<-sf::st_transform(site_plots,crs=raster::projection(r))
 
     #Create directory if needed
-    fold<-paste("/orange/ewhite/b.weinstein/NEON/",siteID,"/NEONPlots/Camera/L3/",sep="")
+    fold<-paste("/orange/ewhite/b.weinstein/NEON",siteID,year,"NEONPlots/Camera/L3/",sep="/")
     if(!dir.exists(fold)){
       dir.create(fold,recursive = T)
     }
