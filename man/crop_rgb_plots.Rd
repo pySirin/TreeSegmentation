@@ -4,7 +4,7 @@
 \alias{crop_rgb_plots}
 \title{Clip RGB Data Based on Neon Plots}
 \usage{
-crop_rgb_plots(siteID = "HARV")
+crop_rgb_plots(siteID = "SJER", year = "2018")
 }
 \arguments{
 \item{siteID}{NEON site abbreviation (e.g. "HARV")}
