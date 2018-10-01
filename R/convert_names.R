@@ -29,7 +29,7 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
     }
 
     if(site=="SJER"){
-      fn<-paste("NEON_D17","_",site,"_DP3_",geo_index,"_image.tif",sep="")
+      fn<-paste("2018","_",site,"_3_",geo_index,"_image.tif",sep="")
     }
 
     if(site=="HARV"){

@@ -16,12 +16,11 @@ if(testing){
 
 
   #Lidar dir
-  lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2017/FullSite/D17/2017_SJER_2/L1/DiscreteLidar/ClassifiedPointCloud/Classified"
+  lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2018/FullSite/D17/2018_SJER_3/L1/DiscreteLidar/ClassifiedPointCloud"
   lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
-  lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
+  #lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
 
-  #lidar_dir<-"/orange/ewhite/NeonData/2017_Campaign/D03/OSBS/L1/DiscreteLidar/Classified_point_cloud/"
-  rgb_dir<-"/orange/ewhite/NeonData/SJER/DP1.30010.001/2017/FullSite/D17/2017_SJER_2/L3/Camera/Mosaic/V02"
+  rgb_dir<-"/orange/ewhite/NeonData/SJER/DP3.30010.001/2018/FullSite/D17/2018_SJER_3/L3/Camera/Mosaic/V01"
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
