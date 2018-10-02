@@ -5,7 +5,7 @@ library(foreach)
 library(dplyr)
 library(stringr)
 
-testing=F
+testing=T
 site="SJER"
 year="2018"
 

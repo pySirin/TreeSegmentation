@@ -47,5 +47,9 @@ detection_training<-function(path,site,year){
   boxes<-trees %>% mutate(numeric_label=as.numeric(as.factor(label))) %>% mutate(tile_xmin=e@xmin,tile_xmax=e@xmax,tile_ymin=e@ymin,tile_ymax=e@ymax)
   fname<-paste("Results/detection_boxes/",site,"/",year,"/",sanitized_fn,".csv",sep="")
 
+  #check if exists
+  filepath<-paste("Results/detection_boxes/",site,"/",year,"/",sep="")
+  if(dir.exists(filepath) == F) dir.create(filepath, showWarnings=F,recursive = T)
+
   write.csv(boxes,fname,row.names = T)
 }
