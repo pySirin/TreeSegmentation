@@ -1,5 +1,8 @@
 #Test Download time for the NEON AOP API
 library(gdata)
+library(downloader)
+library(jsonlite)
+library(httr)
 
 dpID = "DP1.30003.001"
 site = "SJER"
