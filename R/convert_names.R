@@ -17,7 +17,7 @@ convert_names<-function(from,to,lidar=NULL,rgb=NULL,hyperspectral=NULL,site='OSB
 
     domain<-dlookup[dlookup$site==site,"domain"]
 
-    fn<-paste("NEON_",domain,"_",site,"_DP1_",geo_index,"_classified_point_cloud.laz",sep="")
+    fn<-paste("NEON_",domain,"_",site,"_DP1_",geo_index,"_classified_point_cloud_colorized.laz",sep="")
     return(fn)
   }
 

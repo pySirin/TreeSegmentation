@@ -7,11 +7,12 @@ library(stringr)
 
 testing=F
 site="SJER"
+year="2018"
 
 if(testing){
-  path<-"/Users/ben/Downloads/2018_SJER_3_262000_4107000_image.tif"
+  path<-"/Users/ben/Downloads/2018/FullSite/D17/2018_SJER_3/L1/DiscreteLidar/ClassifiedPointCloud/NEON_D17_SJER_DP1_262000_4107000_classified_point_cloud_colorized.laz"
   #path<-"../data/training/NEON_D03_OSBS_DP1_407000_3291000_classified_point_cloud.laz"
-  detection_training(path)
+  detection_training(path,site,year)
  } else{
 
 
@@ -24,8 +25,8 @@ if(testing){
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
-  #cl<-makeCluster(10)
-  #registerDoSNOW(cl)
+  cl<-makeCluster(10)
+  registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
 
@@ -35,7 +36,7 @@ if(testing){
     flag<-rgb_path %in% rgb_files
 
     if(flag){
-      detection_training(path=lidar_files[x],site=site)
+      detection_training(path=lidar_files[x],site=site,year)
     } else{
       return("Failed check_tile")
     }
