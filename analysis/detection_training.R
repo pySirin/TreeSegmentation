@@ -9,7 +9,7 @@ testing=F
 site="SJER"
 
 if(testing){
-  path<-"../data/2017/Lidar/OSBS_006.laz"
+  path<-"/Users/ben/Downloads/2018_SJER_3_262000_4107000_image.tif"
   #path<-"../data/training/NEON_D03_OSBS_DP1_407000_3291000_classified_point_cloud.laz"
   detection_training(path)
  } else{
@@ -24,8 +24,8 @@ if(testing){
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
-  cl<-makeCluster(10)
-  registerDoSNOW(cl)
+  #cl<-makeCluster(10)
+  #registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
 
