@@ -36,21 +36,25 @@ if(testing){
     flag<-rgb_path %in% rgb_files
 
     if(!flag){
+      print(paste(lidar_files[x],"Failed Tile Check, can't be read"))
       return("Failed Tile Check - does not exist")
     }
     #check file are almost all edge black.
     try(r<-raster(paste(rgb_dir,rgb_path,sep="/")))
 
     if(!exists("r")){
+      print(paste(lidar_files[x],"Failed Tile Check, can't be read"))
       return("Failed Tile Check, can't be read")
     }
 
     #check if its black
     if(sum(getValues(r)==0)/length(r) > 0.2){
+      print(paste(lidar_files[x],"Failed Tile Check, mostly a blank black edge"))
       return("Failed Tile Check, mostly a blank black edge")
     }
 
     #Passed checks
+    print(paste(lidar_files[x],"Running"))
     detection_training(path=lidar_files[x],site=site,year)
   }
  }
