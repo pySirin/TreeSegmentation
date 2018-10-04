@@ -5,7 +5,7 @@ library(foreach)
 library(dplyr)
 library(stringr)
 
-testing=T
+testing=F
 site="SJER"
 year="2018"
 
@@ -25,7 +25,7 @@ if(testing){
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
-  cl<-makeCluster(10)
+  cl<-makeCluster(30)
   registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
@@ -35,10 +35,24 @@ if(testing){
 
     flag<-rgb_path %in% rgb_files
 
-    if(flag){
-      detection_training(path=lidar_files[x],site=site,year)
-    } else{
-      return("Failed check_tile")
+    if(!flag){
+      return("Failed Tile Check - does not exist")
+    }
+    #check file are almost all edge black.
+    try(r<-raster(paste(rgb_dir,rgb_path,sep="/")))
+
+    if(!exists("r")){
+      return("Failed Tile Check, can't be read")
+    }
+
+    #check if its black
+    if(sum(getValues(r)==0)/length(r) > 0.2){
+      return("Failed Tile Check, mostly a blank black edge")
+    }
+
+    #Passed checks
+    detection_training(path=lidar_files[x],site=site,year)
+
     }
   }
  }
