@@ -52,7 +52,5 @@ if(testing){
 
     #Passed checks
     detection_training(path=lidar_files[x],site=site,year)
-
-    }
   }
  }
