@@ -4,6 +4,7 @@ library(doSNOW)
 library(foreach)
 library(dplyr)
 library(stringr)
+library(raster)
 
 testing=F
 site="SJER"
@@ -28,7 +29,7 @@ if(testing){
   cl<-makeCluster(32,outfile="")
   registerDoSNOW(cl)
 
-  results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation"),.errorhandling="pass") %dopar%{
+  results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation","raster"),.errorhandling="pass") %dopar%{
 
     #check if tile can be processed
     rgb_path<-convert_names(from="lidar",to="rgb",lidar=lidar_files[x],site=site)
