@@ -6,7 +6,7 @@ library(dplyr)
 library(stringr)
 library(raster)
 
-testing=T
+testing=F
 site="TEAK"
 year="2018"
 
@@ -18,11 +18,11 @@ if(testing){
 
 
   #Lidar dir
-  lidar_dir<-"/orange/ewhite/NeonData/SJER/DP1.30003.001/2018/FullSite/D17/2018_SJER_3/L1/DiscreteLidar/ClassifiedPointCloud"
+  lidar_dir<-"/orange/ewhite/NeonData/TEAK/DP1.30003.001/2018/FullSite/D17/2018_TEAK_3/L1/DiscreteLidar/ClassifiedPointCloud"
   lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
   #lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
 
-  rgb_dir<-"/orange/ewhite/NeonData/SJER/DP3.30010.001/2018/FullSite/D17/2018_SJER_3/L3/Camera/Mosaic/V01"
+  rgb_dir<-"/orange/ewhite/NeonData/TEAK/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/"
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
