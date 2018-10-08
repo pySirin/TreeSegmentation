@@ -6,12 +6,12 @@ library(dplyr)
 library(stringr)
 library(raster)
 
-testing=F
-site="SJER"
+testing=T
+site="TEAK"
 year="2018"
 
 if(testing){
-  path<-"/Users/ben/Downloads/2018/FullSite/D17/2018_SJER_3/L1/DiscreteLidar/ClassifiedPointCloud/NEON_D17_SJER_DP1_262000_4107000_classified_point_cloud_colorized.laz"
+  path<-"/orange/ewhite/NeonData/TEAK/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/2018_TEAK_3_321000_4089000_image.tif"
   #path<-"../data/training/NEON_D03_OSBS_DP1_407000_3291000_classified_point_cloud.laz"
   detection_training(path,site,year)
  } else{
@@ -26,7 +26,7 @@ if(testing){
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 
-  cl<-makeCluster(32,outfile="")
+  cl<-makeCluster(20,outfile="")
   registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation","raster"),.errorhandling="pass") %dopar%{
@@ -59,3 +59,5 @@ if(testing){
     detection_training(path=lidar_files[x],site=site,year)
   }
  }
+
+print(results)
