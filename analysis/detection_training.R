@@ -7,22 +7,22 @@ library(stringr)
 library(raster)
 
 testing=F
-site="TEAK"
+site="SJER"
 year="2018"
 
 if(testing){
-  path<-"/orange/ewhite/NeonData/TEAK/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/2018_TEAK_3_321000_4089000_image.tif"
-  #path<-"../data/training/NEON_D03_OSBS_DP1_407000_3291000_classified_point_cloud.laz"
-  detection_training(path,site,year)
+  #path<-"/orange/ewhite/NeonData/TEAK/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/2018_TEAK_3_321000_4089000_image.tif"
+  path<-"../data/training/NEON_D03_OSBS_DP1_407000_3291000_classified_point_cloud.laz"
+  system.time(detection_training(path,site,year))
  } else{
 
 
   #Lidar dir
-  lidar_dir<-"/orange/ewhite/NeonData/TEAK/DP1.30003.001/2018/FullSite/D17/2018_TEAK_3/L1/DiscreteLidar/ClassifiedPointCloud"
+  lidar_dir<-paste("/orange/ewhite/NeonData/",site,"/DP1.30003.001/2018/FullSite/D17/2018_TEAK_3/L1/DiscreteLidar/ClassifiedPointCloud",sep="")
   lidar_files<-list.files(lidar_dir,full.names = T,pattern=".laz")
   #lidar_files<-lidar_files[!str_detect(lidar_files,"colorized")]
 
-  rgb_dir<-"/orange/ewhite/NeonData/TEAK/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/"
+  rgb_dir<-paste("/orange/ewhite/NeonData/",site,"/DP3.30010.001/2018/FullSite/D17/2018_TEAK_3/L3/Camera/Mosaic/V01/",sep="")
   rgb_files<-list.files(rgb_dir,pattern=".tif")
   #itcs_path<-"/orange/ewhite/b.weinstein/ITC"
 

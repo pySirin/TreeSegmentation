@@ -129,16 +129,21 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#load-in-ground-truth"><span class="toc-section-number">1</span> Load in ground-truth</a></li>
+<li><a href="#load-in-ground-truth"><span class="toc-section-number">1</span> Load in ground-truth</a><ul>
+<li><a href="#neon-precision"><span class="toc-section-number">1.1</span> NEON Precision</a></li>
+</ul></li>
+<li><a href="#load-xml"><span class="toc-section-number">2</span> Load XML</a></li>
 </ul>
 </div>
 
 <pre class="r"><code>library(tidyverse)
+library(xml2)
 library(knitr)
 library(maptools)
 library(rgdal)
 library(TreeSegmentation)
 library(sp)
+library(raster)
 library(rgl)
 library(lidR)
 library(kableExtra)
@@ -165,11 +170,11 @@ cores&lt;-2
 sites&lt;-dat %&gt;% filter(siteID==site) %&gt;% droplevels()
 
 #accepted species list
-species&lt;-read.csv(&quot;../data/NEONPlots/AcceptedSpecies.csv&quot;)
-species&lt;-species %&gt;% filter(siteID %in% sites$siteID)
+#species&lt;-read.csv(&quot;../data/NEONPlots/AcceptedSpecies.csv&quot;)
+#species&lt;-species %&gt;% filter(siteID %in% sites$siteID)
 
 #filter data by species
-sites &lt;- sites %&gt;% filter(scientificName %in% species$scientificName)
+#sites &lt;- sites %&gt;% filter(scientificName %in% species$scientificName)
 
 #search for duplicates, ending in a letter
 sites&lt;-sites %&gt;% filter(!is.na(as.numeric(str_sub(individualID,-1))))
@@ -188,7 +193,127 @@ recalls=list()
   }
 
 #remove empty rows
-sum(unlist(recalls))/length(unlist(recalls))</code></pre>
+print(sum(unlist(recalls))/length(unlist(recalls)))</code></pre>
+<div id="neon-precision" class="section level2">
+<h2><span class="header-section-number">1.1</span> NEON Precision</h2>
+</div>
+</div>
+<div id="load-xml" class="section level1">
+<h1><span class="header-section-number">2</span> Load XML</h1>
+<pre class="r"><code>f&lt;-list.files(&quot;/Users/Ben/Documents/DeepForest/data/SJER/annotations/&quot;,pattern=&quot;SJER_0&quot;,full.names = T)
+
+parser&lt;-function(fil){
+pg &lt;- read_xml(fil)
+
+# get all the &lt;record&gt;s
+recs &lt;- xml_find_all(pg, &quot;//xmin&quot;)
+
+# extract and clean all the columns
+xmin &lt;- trimws(xml_text(recs))
+
+# get all the &lt;record&gt;s
+recs &lt;- xml_find_all(pg, &quot;//ymin&quot;)
+
+# extract and clean all the columns
+ymin &lt;- trimws(xml_text(recs))
+
+# get all the &lt;record&gt;s
+recs &lt;- xml_find_all(pg, &quot;//ymax&quot;)
+
+# extract and clean all the columns
+ymax &lt;- trimws(xml_text(recs))
+
+# get all the &lt;record&gt;s
+recs &lt;- xml_find_all(pg, &quot;//xmax&quot;)
+
+# extract and clean all the columns
+xmax &lt;- trimws(xml_text(recs))
+
+recs &lt;- xml_find_all(pg, &quot;//filename&quot;)
+filename &lt;- trimws(xml_text(recs))
+
+df&lt;-data.frame(filename,xmin=as.numeric(xmin)*0.1,xmax=as.numeric(xmax)*0.1,ymin=as.numeric(ymin)*0.1,ymax=as.numeric(ymax)*0.1)
+return(df)
+}
+
+dat&lt;-bind_rows(lapply(f,parser))</code></pre>
+<p>Find lidar crops</p>
+<pre class="r"><code>plots&lt;-unique(dat$filename)
+
+computeMAP&lt;-function(plot_name){
+lidar_file&lt;-paste(&quot;/Users/ben/Documents/TreeSegmentation/data/NEONPlots/SJER/Lidar/&quot;,str_match(plot_name,&quot;(\\w+).tif&quot;)[,2],&quot;.laz&quot;,sep=&quot;&quot;)
+
+#check if exists
+if(!file.exists(lidar_file)){
+  return(NULL)
+}
+
+#Silva predictions
+silva_boxes&lt;-silva2016(path=lidar_file,proj4=&quot;+init=epsg:32611&quot;)
+
+#hand annotations as spdf
+plot_data&lt;-dat %&gt;% filter(filename==plot_name)
+
+#Project 
+projection_extent&lt;-extent(readLAS(lidar_file))
+
+ground_truth&lt;-list()
+for(x in 1:nrow(plot_data)){
+  
+  e&lt;-extent( projection_extent@xmin + plot_data$xmin[x],
+             projection_extent@xmin + plot_data$xmax[x], 
+            (projection_extent@ymax - plot_data$ymax[x]),
+             (projection_extent@ymax - plot_data$ymax[x]) + (plot_data$ymax[x] - plot_data$ymin[x]) )
+  ground_truth[[x]]&lt;-as(e, 'SpatialPolygons')
+  ground_truth[[x]]@polygons[[1]]@ID&lt;-as.character(x)
+}
+
+ground_truth &lt;- as(SpatialPolygons(lapply(ground_truth,
+                                          function(x) slot(x, &quot;polygons&quot;)[[1]])),&quot;SpatialPolygonsDataFrame&quot;)
+
+ground_truth@data$crown_id=1:nrow(ground_truth)
+
+proj4string(ground_truth)&lt;-silva_boxes$tile@crs
+
+#predictions
+predictions&lt;-tree_hulls(silva_boxes$tile)
+
+#match names
+predictions$ID&lt;-1:nrow(predictions)
+
+r&lt;-stack(paste(&quot;/Users/Ben/Documents/DeepForest/data/SJER/&quot;,plot_name,sep=&quot;&quot;))
+tiff(paste(&quot;plots/Silva/&quot;,plot_name,sep=&quot;&quot;))
+plotRGB(r)
+plot(ground_truth,add=T,border=&quot;green&quot;,bg=&quot;transparent&quot;)
+plot(predictions,add=T,border=&quot;red&quot;,bg=&quot;transparent&quot;)
+dev.off()
+
+#If there is only one prediction, skip assignment
+if(nrow(predictions) &gt; nrow(ground_truth)){
+  assignment&lt;-assign_trees(ground_truth=ground_truth,prediction=predictions)
+
+  statdf&lt;-calc_jaccard(assignment=assignment,ground_truth = ground_truth,prediction=predictions)
+} else{
+  #Find max overlap
+  po&lt;-polygon_overlap_all(ground_truth,predictions)
+  statdf&lt;-po %&gt;% group_by(prediction_id) %&gt;% filter(area==max(area)) %&gt;% group_by(crown_id,prediction_id) %&gt;% do(data.frame(IoU=IoU(ground_truth[.$crown_id,],predictions[.$prediction_id,])))
+}
+
+results&lt;-statdf$IoU &gt; 0.5
+return(results)
+}
+
+maP&lt;-computeMAP(plot_name=plots[10])
+
+maP_list&lt;-lapply(plots,computeMAP)
+
+results&lt;-unlist(maP_list)
+
+sum(results)/length(results)</code></pre>
+<pre><code>## [1] 0.07692308</code></pre>
+<p>Average Precision Calculation</p>
+<pre><code>
+</code></pre>
 </div>
 
 

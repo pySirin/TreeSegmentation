@@ -12,11 +12,13 @@ editor_options:
 
 ```{r,warning=F,message=F}
 library(tidyverse)
+library(xml2)
 library(knitr)
 library(maptools)
 library(rgdal)
 library(TreeSegmentation)
 library(sp)
+library(raster)
 library(rgl)
 library(lidR)
 library(kableExtra)
@@ -45,11 +47,11 @@ dat<-read.csv("../data/Terrestrial/field_data.csv")
 sites<-dat %>% filter(siteID==site) %>% droplevels()
 
 #accepted species list
-species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
-species<-species %>% filter(siteID %in% sites$siteID)
+#species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
+#species<-species %>% filter(siteID %in% sites$siteID)
 
 #filter data by species
-sites <- sites %>% filter(scientificName %in% species$scientificName)
+#sites <- sites %>% filter(scientificName %in% species$scientificName)
 
 #search for duplicates, ending in a letter
 sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
@@ -69,6 +71,137 @@ recalls=list()
 
 #remove empty rows
 print(sum(unlist(recalls))/length(unlist(recalls)))
+```
+
+## NEON Precision
+
+#Load XML
+
+```{r}
+
+f<-list.files("/Users/Ben/Documents/DeepForest/data/SJER/annotations/",pattern="SJER_0",full.names = T)
+
+parser<-function(fil){
+pg <- read_xml(fil)
+
+# get all the <record>s
+recs <- xml_find_all(pg, "//xmin")
+
+# extract and clean all the columns
+xmin <- trimws(xml_text(recs))
+
+# get all the <record>s
+recs <- xml_find_all(pg, "//ymin")
+
+# extract and clean all the columns
+ymin <- trimws(xml_text(recs))
+
+# get all the <record>s
+recs <- xml_find_all(pg, "//ymax")
+
+# extract and clean all the columns
+ymax <- trimws(xml_text(recs))
+
+# get all the <record>s
+recs <- xml_find_all(pg, "//xmax")
+
+# extract and clean all the columns
+xmax <- trimws(xml_text(recs))
+
+recs <- xml_find_all(pg, "//filename")
+filename <- trimws(xml_text(recs))
+
+df<-data.frame(filename,xmin=as.numeric(xmin)*0.1,xmax=as.numeric(xmax)*0.1,ymin=as.numeric(ymin)*0.1,ymax=as.numeric(ymax)*0.1)
+return(df)
+}
+
+dat<-bind_rows(lapply(f,parser))
+```
+
+Find lidar crops
+
+```{r}
+
+plots<-unique(dat$filename)
+
+computeMAP<-function(plot_name){
+lidar_file<-paste("/Users/ben/Documents/TreeSegmentation/data/NEONPlots/SJER/Lidar/",str_match(plot_name,"(\\w+).tif")[,2],".laz",sep="")
+
+#check if exists
+if(!file.exists(lidar_file)){
+  return(NULL)
+}
+
+#Silva predictions
+silva_boxes<-silva2016(path=lidar_file,proj4="+init=epsg:32611")
+
+#hand annotations as spdf
+plot_data<-dat %>% filter(filename==plot_name)
+
+#Project 
+projection_extent<-extent(readLAS(lidar_file))
+
+ground_truth<-list()
+for(x in 1:nrow(plot_data)){
+  
+  e<-extent( projection_extent@xmin + plot_data$xmin[x],
+             projection_extent@xmin + plot_data$xmax[x], 
+            (projection_extent@ymax - plot_data$ymax[x]),
+             (projection_extent@ymax - plot_data$ymax[x]) + (plot_data$ymax[x] - plot_data$ymin[x]) )
+  ground_truth[[x]]<-as(e, 'SpatialPolygons')
+  ground_truth[[x]]@polygons[[1]]@ID<-as.character(x)
+}
+
+ground_truth <- as(SpatialPolygons(lapply(ground_truth,
+                                          function(x) slot(x, "polygons")[[1]])),"SpatialPolygonsDataFrame")
+
+ground_truth@data$crown_id=1:nrow(ground_truth)
+
+proj4string(ground_truth)<-silva_boxes$tile@crs
+
+#predictions
+predictions<-tree_hulls(silva_boxes$tile)
+
+#match names
+predictions$ID<-1:nrow(predictions)
+
+r<-stack(paste("/Users/Ben/Documents/DeepForest/data/SJER/",plot_name,sep=""))
+tiff(paste("plots/Silva/",plot_name,sep=""))
+plotRGB(r)
+plot(ground_truth,add=T,border="green",bg="transparent")
+plot(predictions,add=T,border="red",bg="transparent")
+dev.off()
+
+#If there is only one prediction, skip assignment
+if(nrow(predictions) > nrow(ground_truth)){
+  assignment<-assign_trees(ground_truth=ground_truth,prediction=predictions)
+
+  statdf<-calc_jaccard(assignment=assignment,ground_truth = ground_truth,prediction=predictions)
+} else{
+  #Find max overlap
+  po<-polygon_overlap_all(ground_truth,predictions)
+  statdf<-po %>% group_by(prediction_id) %>% filter(area==max(area)) %>% group_by(crown_id,prediction_id) %>% do(data.frame(IoU=IoU(ground_truth[.$crown_id,],predictions[.$prediction_id,])))
+}
+
+results<-statdf$IoU > 0.5
+return(results)
+}
+
+maP<-computeMAP(plot_name=plots[10])
+
+maP_list<-lapply(plots,computeMAP)
+
+results<-unlist(maP_list)
+
+sum(results)/length(results)
 
 ```
+
+Average Precision Calculation
+
+```{}
+
+
+```
+
 
