@@ -24,7 +24,7 @@ if(testing){
   rgb_dir<-paste("/ufrc/ewhite/b.weinstein/NeonData/",site,"/DP3.30010.001/2018/FullSite/D17/2018_",site,"_3/L3/Camera/Mosaic/V01/",sep="")
   rgb_files<-list.files(rgb_dir,pattern=".tif")
 
-  cl<-makeCluster(25,outfile="")
+  cl<-makeCluster(10,outfile="")
   registerDoSNOW(cl)
 
   results<-foreach::foreach(x=1:length(lidar_files),.packages=c("TreeSegmentation","raster"),.errorhandling="pass") %dopar%{
@@ -50,6 +50,17 @@ if(testing){
     if(sum(getValues(r)==0)/length(r) > 0.2){
       print(paste(lidar_files[x],"Failed Tile Check, mostly a blank black edge"))
       return("Failed Tile Check, mostly a blank black edge")
+    }
+
+    #Check if in output already
+    sanitized_fn<-stringr::str_match(string=lidar_files[x],pattern="(\\w+).laz")[,2]
+
+    #check if exists
+    filepath<-paste("Results/detection_boxes/",site,"/",year,"/",sep="")
+    already_completed<-list.files(filepath)
+
+    if(sanitized_fn %in% already_completed){
+      return(paste(sanitized_fn, "already exists"))
     }
 
     #Passed checks
