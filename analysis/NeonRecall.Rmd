@@ -61,12 +61,17 @@ trees<-sites  %>% filter(!is.na(UTM_E))
 
 #get tiles to evaluate, match with deep learning 
 rgb_tiles<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,sep=""))
-plotIDs<-str_match(rgb_tiles,"(SJER_\\d+).tif")[,2]
+plotIDs<-str_match(rgb_tiles,paste(site,"(_\\d+).tif",sep=""))[,2]
 plotIDs<-plotIDs[!is.na(plotIDs)]
+
+epsg_df<-data.frame(site=c("SJER","TEAK"),epsg=c("epsg:32611","EPSG:3857"))
+
+#set epsg
+epsg_string<-paste("+init=epsg:",epsg_df[epsg_df$site %in% site,"epsg"],sep="")
 
 recalls=list()
   for(x in 1:length(plotIDs)){
-    recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,proj4="+init=epsg:32611",plot_results=T)
+    recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,proj4=epsg_string,plot_results=T)
   }
 
 #remove empty rows
@@ -168,8 +173,8 @@ predictions$ID<-1:nrow(predictions)
 r<-stack(paste("/Users/Ben/Documents/DeepForest/data/SJER/",plot_name,sep=""))
 tiff(paste("plots/Silva/",plot_name,sep=""))
 plotRGB(r)
-plot(ground_truth,add=T,border="green",bg="transparent")
-plot(predictions,add=T,border="red",bg="transparent")
+#plot(ground_truth,add=T,border="green",bg="transparent")
+plot(predictions,add=T,border="orange",bg="transparent",lwd=4)
 dev.off()
 
 #If there is only one prediction, skip assignment
