@@ -81,10 +81,10 @@ evaluateNeon<-function(trees,plotID,algorithm="silva",path_to_tiles=NULL,extra=F
     #which was the best performing method
     best_method<-statdf %>% arrange(desc(Recall))
     ortho<-raster::stack(paste(basemap,plotID,".tif",sep=""))
-    png(paste("plots/Recall/",plotID,".png",sep=""))
+    svg(paste("plots/Recall/",plotID,".svg",sep=""))
     par(oma=c(0,0,2,0))
     raster::plotRGB(ortho,main=paste(plotID,":",best_method$Method[1],"=",round(best_method$Recall[1],2)),axes=T)
-    plot(pts,col="red",add=TRUE,pch=1)
+    plot(pts,col="red",add=TRUE,pch=19)
     plot(predictions[[best_method$Method[1]]],add=T,border="white",axes=F)
     title()
     dev.off()

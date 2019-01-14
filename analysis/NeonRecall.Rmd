@@ -29,7 +29,7 @@ opts_chunk$set(warning=F,message=F)
 #set color ramp for treeID
 col = pastel.colors(200)
 
-site="SJER"
+site="TEAK"
 
 #set data paths
 path_to_tiles=paste("../data/NeonPlots/",site,"/Lidar/",sep="")
@@ -47,11 +47,11 @@ dat<-read.csv("../data/Terrestrial/field_data.csv")
 sites<-dat %>% filter(siteID==site) %>% droplevels()
 
 #accepted species list
-#species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
-#species<-species %>% filter(siteID %in% sites$siteID)
+species<-read.csv("../data/NEONPlots/AcceptedSpecies.csv")
+species<-species %>% filter(siteID %in% site)
 
 #filter data by species
-#sites <- sites %>% filter(scientificName %in% species$scientificName)
+sites <- sites %>% filter(scientificName %in% species$scientificName)
 
 #search for duplicates, ending in a letter
 sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
@@ -61,14 +61,17 @@ trees<-sites  %>% filter(!is.na(UTM_E))
 
 #get tiles to evaluate, match with deep learning 
 rgb_tiles<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,sep=""))
-plotIDs<-str_match(rgb_tiles,paste(site,"(_\\d+).tif",sep=""))[,2]
+plotIDs<-str_match(rgb_tiles,"(\\w+_\\d+).tif")[,2]
 plotIDs<-plotIDs[!is.na(plotIDs)]
 
-epsg_df<-data.frame(site=c("SJER","TEAK"),epsg=c("epsg:32611","EPSG:3857"))
+epsg_df<-data.frame(site=c("SJER","TEAK"),epsg=c("32611","3857"))
 
 #set epsg
 epsg_string<-paste("+init=epsg:",epsg_df[epsg_df$site %in% site,"epsg"],sep="")
 
+```
+
+```{r}
 recalls=list()
   for(x in 1:length(plotIDs)){
     recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,proj4=epsg_string,plot_results=T)
@@ -84,12 +87,15 @@ print(sum(unlist(recalls))/length(unlist(recalls)))
 
 ```{r}
 
-f<-list.files("/Users/Ben/Documents/DeepForest/data/SJER/annotations/",pattern="SJER_0",full.names = T)
+f<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,"/annotations/",sep=""),pattern=paste(site,"_0",sep=""),full.names = T)
 
 parser<-function(fil){
 pg <- read_xml(fil)
 
 # get all the <record>s
+recs <- xml_find_all(pg, "//name")
+names <- trimws(xml_text(recs))
+
 recs <- xml_find_all(pg, "//xmin")
 
 # extract and clean all the columns
@@ -116,7 +122,7 @@ xmax <- trimws(xml_text(recs))
 recs <- xml_find_all(pg, "//filename")
 filename <- trimws(xml_text(recs))
 
-df<-data.frame(filename,xmin=as.numeric(xmin)*0.1,xmax=as.numeric(xmax)*0.1,ymin=as.numeric(ymin)*0.1,ymax=as.numeric(ymax)*0.1)
+df<-data.frame(filename,xmin=as.numeric(xmin)*0.1,xmax=as.numeric(xmax)*0.1,ymin=as.numeric(ymin)*0.1,ymax=as.numeric(ymax)*0.1,name=names)
 return(df)
 }
 
