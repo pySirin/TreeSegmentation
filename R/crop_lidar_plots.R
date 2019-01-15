@@ -6,12 +6,13 @@
 #' @importFrom magrittr "%>%"
 #' @export
 #'
-crop_lidar_plots<-function(siteID="HARV"){
+crop_lidar_plots<-function(siteID="TEAK"){
 
   plots<-sf::st_read("../data/NEONFieldSites/All_NEON_TOS_Plots_V5/All_Neon_TOS_Polygons_V5.shp")
   dat<-read.csv("../data/Terrestrial/field_data.csv")
   site<-dat[dat$siteID %in% siteID,]
   site_plots<-plots[plots$plotID %in% site$plotID,]
+
   #Only baseplots
   site_plots<-site_plots[site_plots$subtype=="basePlot",]
 
@@ -40,7 +41,7 @@ crop_lidar_plots<-function(siteID="HARV"){
   r<-lidR::readLAS(fils[1])
 
   #Project
-  site_plots<-sf::st_transform(site_plots,crs= as.character(r@crs))
+  site_plots<-sf::st_transform(site_plots,crs= projection(r))
 
   #create lidar catalog
   ctg<-lidR::catalog(path_to_tiles)
@@ -65,11 +66,8 @@ crop_lidar_plots<-function(siteID="HARV"){
       next
     }
 
-    extent_polygon<-methods::as(plotextent,"SpatialPolygons")
-    extent_polygon<-extent_polygon@polygons[[1]]@Polygons[[1]]
-
-    #clip to extent
-    clipped_las<-lidR::lasclip(ctg,extent_polygon)
+    #clip
+    clipped_las<-lidR::lasclip(ctg,plotextent)
 
     #if null, return NA
     if(is.null(clipped_las)){

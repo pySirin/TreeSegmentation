@@ -12,11 +12,6 @@
 #' chm=canopy_model(tile)
 #' @export
 canopy_model<-function(las,res=0.5){
-  # compute a canopy image
-  chm= lidR::grid_canopy(las, res=res, subcircle = 0.2, na.fill = "knnidw", k = 4,p=2)
-  chm = raster::as.raster(chm)
-  kernel = matrix(1,3,3)
-  chm = raster::focal(chm, w = kernel, fun = mean)
-  chm = raster::focal(chm, w = kernel, fun = mean)
+  chm <- grid_canopy(las, res = res, pitfree(c(0,2,5,10,15), c(0, 1.5)))
   return(chm)
 }

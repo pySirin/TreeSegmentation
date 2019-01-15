@@ -5,7 +5,7 @@
 \title{Wrapper for calculating recall statistics for NEON tree centroids.}
 \usage{
 evaluateNeon(trees, plotID, algorithm = "silva", path_to_tiles = NULL,
-  extra = F, plot_results = F, basemap = "", proj4 = "+init=epsg:32611")
+  extra = F, plot_results = F, basemap = "", epsg_numeric = 32611)
 }
 \arguments{
 \item{algorithm}{Character. A vector of lidar unsupervised classification algorithm(s). Currently "silva","dalponte","li" and "watershed" are implemented. See \code{\link[lidR]{lastrees}}}

@@ -13,11 +13,12 @@
 ground_model<-function(las,ground=T){
 
   if(ground){
-    ws = seq(3,21, 3)
-    th = seq(0.1, 6, length.out = length(ws))
-    lidR::lasground(las, "pmf", ws, th)
+    ws = seq(3,12, 3)
+    th = seq(0.1, 1.5, length.out = length(ws))
+    las<-lidR::lasground(las, pmf( ws, th))
   }
 
   # normalization
-  lidR::lasnormalize(las, method = "knnidw", k = 10L)
+  las<-lidR::lasnormalize(las, knnidw(k = 8, p = 2))
+  return(las)
 }

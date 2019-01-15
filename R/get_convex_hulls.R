@@ -22,6 +22,7 @@
 #' silva_convex<-get_convex_hull(silva2016,silva2016@data$treeID)
 #'
 get_convex_hulls<-function(tile,ID){
+
   split_trees= split(tile@data, ID)
   tree_polygons<-lapply(split_trees,convex_hull)
 
@@ -39,11 +40,11 @@ get_convex_hulls<-function(tile,ID){
     convex_polygons<-tree_polygons[[1]]
   }
 
-
   #make into sp dataframe
   IDs <- sapply(slot(convex_polygons, "polygons"), function(x) slot(x, "ID"))
   df <- data.frame(ID=1:length(IDs), row.names=IDs)
   result<-sp::SpatialPolygonsDataFrame(convex_polygons,df)
-  sp::proj4string(result)<-tile@crs
+  sp::proj4string(result)<-projection(tile)
+
   return(result)
 }

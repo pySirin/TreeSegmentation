@@ -10,7 +10,7 @@
 #' @return dataframe of the jaccard overlap among polygon pairs for each selected method. If extra=T, \code{evaluate} will return a list object of results, predicted polygons, as well as output lidR tiles. See e.g. \code{\link{silva2016}}
 #' @export
 #'
-evaluateNeon<-function(trees,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F,basemap="",proj4="+init=epsg:32611"){
+evaluateNeon<-function(trees,plotID,algorithm="silva",path_to_tiles=NULL,extra=F,plot_results=F,basemap="",epsg_numeric=32611){
 
   #Select points for the plot
   pts<-trees[trees$plotID %in% plotID,]
@@ -35,28 +35,28 @@ evaluateNeon<-function(trees,plotID,algorithm="silva",path_to_tiles=NULL,extra=F
   tiles<-list()
   if("silva" %in% algorithm){
     print("Silva")
-    silva<-silva2016(path=inpath,proj4=proj4)
+    silva<-run_silva2016(path = inpath, epsg_numeric = epsg_numeric)
     predictions$silva<-silva$convex
     tiles$silva<-silva$tile
   }
 
   if("dalponte" %in% algorithm){
     print("Dalponte")
-    dalponte<-dalponte2016(path=inpath,proj4=proj4)
+    dalponte<-run_dalponte2016(path=inpath,epsg_numeric = epsg_numeric)
     predictions$dalponte<-dalponte$convex
     tiles$dalponte<-dalponte$tile
   }
 
   if("li" %in% algorithm){
     print("li")
-    li<-li2012(path=inpath,proj4=proj4)
+    li<-run_li2012(path=inpath,epsg_numeric = epsg_numeric)
     predictions$li<-li$convex
     tiles$li<-li$tile
   }
 
   if("watershed" %in% algorithm){
     print("Watershed")
-    watershed_result<-watershed(path=inpath,proj4=proj4)
+    watershed_result<-run_watershed(path=inpath,epsg_numeric = epsg_numeric)
     predictions$watershed<-watershed_result$convex
     tiles$watershed<-watershed_result$tile
   }

@@ -32,8 +32,8 @@ col = pastel.colors(200)
 site="TEAK"
 
 #set data paths
-path_to_tiles=paste("../data/NeonPlots/",site,"/Lidar/",sep="")
-basemap=paste("../data/NeonPlots/",site,"/Camera/L3/",sep="")
+path_to_tiles=paste("../data/NeonTreeEvaluation/",site,"/",sep="")
+basemap=paste("../data/NeonTreeEvaluation/",site,"/",sep="")
 
 #set cores
 cores<-2
@@ -60,21 +60,21 @@ sites<-sites %>% filter(!is.na(as.numeric(str_sub(individualID,-1))))
 trees<-sites  %>% filter(!is.na(UTM_E))
 
 #get tiles to evaluate, match with deep learning 
-rgb_tiles<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,sep=""))
+rgb_tiles<-list.files(paste("/Users/Ben/Documents/DeepLidar/data/",site,sep=""))
 plotIDs<-str_match(rgb_tiles,"(\\w+_\\d+).tif")[,2]
 plotIDs<-plotIDs[!is.na(plotIDs)]
 
 epsg_df<-data.frame(site=c("SJER","TEAK"),epsg=c("32611","3857"))
 
 #set epsg
-epsg_string<-paste("+init=epsg:",epsg_df[epsg_df$site %in% site,"epsg"],sep="")
+epsg_numeric<-epsg_df[epsg_df$site %in% site,"epsg"]
 
 ```
 
 ```{r}
 recalls=list()
   for(x in 1:length(plotIDs)){
-    recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,proj4=epsg_string,plot_results=T)
+    recalls[[x]]<-evaluateNeon(trees=trees,plotID=plotIDs[x],path_to_tiles=path_to_tiles,algorithm = "silva",basemap = basemap,epsg_numeric = epsg_numeric,plot_results=T)
   }
 
 #remove empty rows
@@ -87,7 +87,7 @@ print(sum(unlist(recalls))/length(unlist(recalls)))
 
 ```{r}
 
-f<-list.files(paste("/Users/Ben/Documents/DeepForest/data/",site,"/annotations/",sep=""),pattern=paste(site,"_0",sep=""),full.names = T)
+f<-list.files(paste("../data/NeonTreeEvaluation/",site,"/annotations/",sep=""),pattern=paste(site,"_0",sep=""),full.names = T)
 
 parser<-function(fil){
 pg <- read_xml(fil)

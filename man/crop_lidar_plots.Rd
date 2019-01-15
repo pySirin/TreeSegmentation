@@ -4,7 +4,7 @@
 \alias{crop_lidar_plots}
 \title{Clip Lidar Data Based on Neon Plots}
 \usage{
-crop_lidar_plots(siteID = "HARV")
+crop_lidar_plots(siteID = "TEAK")
 }
 \arguments{
 \item{siteID}{NEON site abbreviation (e.g. "HARV")}

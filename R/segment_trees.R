@@ -15,12 +15,16 @@
 #' @export
 segment_trees<-function(las,algorithm="watershed",chm=chm,plots=F){
 
+  #Compute tree tops
+  ttops <- tree_detection(las, lmf(ws = 5))
+
   if(algorithm=="watershed"){
     # tree segmentation
-    crowns = lidR::lastrees(las, algorithm = algorithm, chm, th = 4, extra = TRUE)
+
+    crowns = lidR::lastrees(las, mcwatershed(chm, ttops))
 
     # display
-    tree = lidR::lasfilter(las, !is.na(treeID))
+    tree = lidR::lasfilter(crowns, !is.na(treeID))
 
     # More stuff
     contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
@@ -30,15 +34,11 @@ segment_trees<-function(las,algorithm="watershed",chm=chm,plots=F){
       plot(chm, col = height.colors(50))
       plot(contour, add = T)
     }
-
-    return(las)
   }
   if (algorithm=="dalponte2016"){
 
     # Dalponte 2016
-    ttops = lidR::tree_detection(chm, 5, 2)
-    crowns <- lidR::lastrees_dalponte(las, chm, ttops,max_cr = 7,extra=T)
-
+    crowns <- lidR::lastrees_dalponte(las, dalponte2016(chm, ttops,max_cr = 7))
     contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
 
     if(plots){
@@ -47,12 +47,12 @@ segment_trees<-function(las,algorithm="watershed",chm=chm,plots=F){
       plot(contour, add = T)
     }
 
-    return(las)
   }
 
   if(algorithm=="li2012"){
+
     # tree segmentation
-    lidR::lastrees(las, "li2012", R = 5)
+    lidR::lastrees(las, li2012(dt1 = 1.4))
 
     # display
     tree = lidR::lasfilter(las, !is.na(treeID))
@@ -66,22 +66,20 @@ segment_trees<-function(las,algorithm="watershed",chm=chm,plots=F){
 
   if(algorithm=="silva2016"){
 
-    ttops = lidR::tree_detection(chm, 5, 2)
-    crowns<-lidR::lastrees_silva(las, chm, ttops, max_cr_factor = 0.6, exclusion = 0.6,
-                           extra = T)
+    crowns<-lidR::lastrees(las, silva2016(chm, ttops, max_cr_factor = 0.6, exclusion = 0.6))
 
     # display
-    tree = lidR::lasfilter(las, !is.na(treeID))
+    crowns = lidR::lasfilter(crowns, !is.na(treeID))
 
     # More stuff
-    contour = lidR::tree_hulls(las)
+    contour = lidR::tree_hulls(crowns)
 
     if(plots){
       plot(tree, color = "treeID", colorPalette = pastel.colors(100), size = 1,backend="rgl")
       plot(chm, col = height.colors(50))
       plot(contour, add = T)
     }
-    return(las)
   }
 
+  return(crowns)
 }
